@@ -1,0 +1,17 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="800dp"
+    android:height="800dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Hình tròn bao quanh toàn bộ vector với màu nền -->
+    <path
+        android:pathData="M12,12m-12,0a12,12 0,1 1,24 0a12,12 0,1 1,-24 0"
+        android:fillColor="#FFFFFF"/> <!-- Màu nền của hình tròn -->
+
+    <!-- Path -->
+    <path
+        android:pathData="M14.096,3.076l1.634,2.292L24,3.076M5.503,20.924l4.474,-4.374 -2.692,-2.89m6.133,-10.584L11.027,5.23l4.022,0.15M4.124,3.077l0.857,1.76 4.734,0.294m-3.058,7.072l3.497,-6.522L0,5.13m7.064,7.485l3.303,3.548 3.643,-3.57 1.13,-6.652 -4.439,-0.228Z"
+        android:fillColor="#2bb971"/> <!-- Màu của path -->
+
+</vector>
