@@ -10,18 +10,18 @@
 
     <ImageView
         android:layout_width="80dp"
-        android:src="@drawable/freelancer"
-        android:layout_height="80dp" />
+        android:layout_height="80dp"
+        android:src="@drawable/freelancer" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:fontFamily="@font/youngserif"
-        android:textStyle="bold"
         android:gravity="center"
         android:text="Sign up"
         android:textColor="#000D73"
-        android:textSize="45dp" />
+        android:textSize="45dp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/full_name"
@@ -39,8 +39,8 @@
         android:layout_marginTop="20dp"
         android:background="@drawable/edit_text_background"
         android:gravity="center"
-        android:inputType="phone"
-        android:hint="Mobile number" />
+        android:hint="Mobile number"
+        android:inputType="phone" />
 
     <EditText
         android:id="@+id/email"
@@ -52,25 +52,58 @@
         android:hint="Email"
         android:inputType="textEmailAddress" />
 
-    <EditText
-        android:id="@+id/password"
+    <RelativeLayout
         android:layout_width="350dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/edit_text_background"
-        android:gravity="center"
-        android:hint="Password"
-        android:inputType="textPassword" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
 
-    <EditText
-        android:id="@+id/confirm_password"
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="350dp"
+            android:layout_height="50dp"
+            android:background="@drawable/edit_text_background"
+            android:gravity="center"
+            android:hint="Password"
+            android:inputType="textPassword" />
+
+        <ImageButton
+            android:id="@+id/visibleButton"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:background="?android:selectableItemBackground"
+            android:scaleType="fitCenter"
+            android:src="@drawable/invisible" />
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="350dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/edit_text_background"
-        android:gravity="center"
-        android:hint="Confirm Password"
-        android:inputType="textPassword" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <EditText
+            android:id="@+id/confirm_password"
+            android:layout_width="350dp"
+            android:layout_height="50dp"
+            android:background="@drawable/edit_text_background"
+            android:gravity="center"
+            android:hint="Confirm Password"
+            android:inputType="textPassword" />
+
+        <ImageButton
+            android:id="@+id/visibleButtonConfirm"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:background="?android:selectableItemBackground"
+            android:scaleType="fitCenter"
+            android:src="@drawable/invisible" />
+    </RelativeLayout>
 
     <Button
         android:id="@+id/signupButton"
@@ -83,9 +116,9 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
         android:gravity="center"
-        android:orientation="horizontal"
-        android:layout_marginTop="30dp">
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
@@ -103,7 +136,6 @@
             android:textColor="@color/main_green"
             android:textSize="17sp" />
     </LinearLayout>
-
 
 
 </LinearLayout>

@@ -34,15 +34,31 @@
         android:inputType="textEmailAddress"
         android:padding="15dp" />
 
-    <EditText
-        android:id="@+id/password"
+    <RelativeLayout
         android:layout_width="350dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/edit_text_background"
-        android:hint="••••••••"
-        android:inputType="textPassword"
-        android:padding="15dp" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="350dp"
+            android:layout_height="50dp"
+            android:background="@drawable/edit_text_background"
+            android:hint="••••••••"
+            android:inputType="textPassword"
+            android:padding="15dp" />
+
+        <ImageButton
+            android:id="@+id/visibleButton"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:background="?android:selectableItemBackground"
+            android:scaleType="fitCenter"
+            android:src="@drawable/invisible" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/resetPassword"
