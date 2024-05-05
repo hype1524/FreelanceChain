@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "523714179322",
+    "project_id": "freelanchain",
+    "storage_bucket": "freelanchain.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:523714179322:android:32229e5a31a8c28a779943",
+        "android_client_info": {
+          "package_name": "ie.app.freelanchaincode"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "523714179322-tvmptb9gmkia98hubokgomhqpblrljj4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ie.app.freelanchaincode",
+            "certificate_hash": "3e9806f7c40888c89d32f8376ad3bdbac5b488d4"
+          }
+        },
+        {
+          "client_id": "523714179322-c2iaj6854npbfd0qftvck2kc9f09ql4v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWlQU-Xy9TFIwS_wO9hZUgMjGZ2nCXCKo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "523714179322-c2iaj6854npbfd0qftvck2kc9f09ql4v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
