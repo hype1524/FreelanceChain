@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import ie.app.freelanchaincode.auth.EditProfileActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var button:Button

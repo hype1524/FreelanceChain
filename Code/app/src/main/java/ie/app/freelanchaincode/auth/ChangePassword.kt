@@ -1,4 +1,4 @@
-package ie.app.freelanchaincode
+package ie.app.freelanchaincode.auth
 
 import android.content.Context
 import android.content.Intent
