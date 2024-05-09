@@ -1,4 +1,4 @@
-package ie.app.freelanchaincode
+package ie.app.freelanchaincode.auth
 
 import android.content.Intent
 import android.net.Uri
@@ -15,6 +15,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import ie.app.freelanchaincode.MainActivity
+import ie.app.freelanchaincode.R
 import ie.app.freelanchaincode.databinding.ActivityLoginBinding
 import ie.app.freelanchaincode.models.UserModel
 

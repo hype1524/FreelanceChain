@@ -1,42 +1,28 @@
-//class EditProfileActivity : AppCompatActivity() {
-////    private  lateinit var auth: FirebaseAuth
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_edit)
-//    }
-////        auth = FirebaseAuth.getInstance()
-////        var user = auth.currentUser
+package ie.app.freelanchaincode.auth
 
-//}
-
-package ie.app.freelanchaincode
-
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.util.Log
-import android.widget.Button
-import android.widget.TextView
+import android.provider.MediaStore
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.toObject
+import com.google.firebase.storage.FirebaseStorage
+import ie.app.freelanchaincode.MainActivity
 import ie.app.freelanchaincode.databinding.ActivityEditBinding
 import ie.app.freelanchaincode.models.UserModel
 
 
 class EditProfileActivity : AppCompatActivity() {
     private lateinit var binding:ActivityEditBinding
-    private lateinit var myText: TextView
-//    private lateinit var
-    private lateinit var auth: FirebaseAuth
+    private var auth = FirebaseAuth.getInstance()
+    private var storage = FirebaseStorage.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        auth = FirebaseAuth.getInstance()
         val user = auth.currentUser
 
         if (user == null) {
@@ -68,7 +54,30 @@ class EditProfileActivity : AppCompatActivity() {
         }
 
         binding.signOut.setOnClickListener {
+            // Update user's sign-in state in Firestore
+                val userData = hashMapOf(
+                    "signIn" to false
+                )
+                FirebaseFirestore.getInstance().collection("User").document(user?.uid ?: "")
+                .set(userData,SetOptions.merge())
+                    .addOnSuccessListener {
+                        // Sign out the user from Firebase Authentication
+                        auth.signOut()
 
+                        Toast.makeText(this@EditProfileActivity, "Signed out successfully", Toast.LENGTH_SHORT).show()
+
+                         Intent(this@EditProfileActivity, LoginActivity::class.java).also { startActivity(it) }
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this@EditProfileActivity, "Failed to sign out: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+        }
+
+        binding.passwordEdit.setOnClickListener{
+            Intent (
+                this@EditProfileActivity,
+                ChangePassword::class.java
+            ).also { startActivity(it) }
         }
 
         binding.saveChange.setOnClickListener {
@@ -85,6 +94,32 @@ class EditProfileActivity : AppCompatActivity() {
                 .addOnFailureListener{exeption ->
                     Toast.makeText(this@EditProfileActivity, "Update Profile faile with ${exeption.message}", Toast.LENGTH_SHORT).show()
                 }
+        }
+
+        binding.changeAvater.setOnClickListener {
+            changeAvatar(this@EditProfileActivity)
+        }
+    }
+
+    private fun changeAvatar(context: Context) {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        startActivityForResult(intent, 3);
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK && data != null && requestCode == 3) {
+            val selectedImage = data.data
+            binding.imageView.setImageURI(selectedImage)
+            val reference = storage.reference.child(("images/${FirebaseAuth.getInstance().uid}"))
+            reference.delete()
+                .addOnSuccessListener {
+                    val newStorageReference = storage.reference.child("images/${FirebaseAuth.getInstance().uid}")
+                    if (selectedImage != null) {
+                        newStorageReference.putFile(selectedImage)
+                    };
+                }
+
         }
     }
 }
