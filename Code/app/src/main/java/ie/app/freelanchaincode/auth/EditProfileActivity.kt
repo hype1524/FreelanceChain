@@ -40,6 +40,11 @@ class EditProfileActivity : AppCompatActivity() {
                         binding.mailAddressEdit.setText(userData.email)
                         binding.userNameEdit.setText(userData.name)
                     }
+
+                    val reference = storage.reference.child("images/${user.uid}")
+                    reference.downloadUrl.addOnSuccessListener {
+                        binding.imageView.setImageURI(it)
+                    }
                 }
                 .addOnFailureListener { exception ->
                     Toast.makeText(this@EditProfileActivity, "Get error",Toast.LENGTH_SHORT).show()
@@ -117,7 +122,7 @@ class EditProfileActivity : AppCompatActivity() {
                     val newStorageReference = storage.reference.child("images/${FirebaseAuth.getInstance().uid}")
                     if (selectedImage != null) {
                         newStorageReference.putFile(selectedImage)
-                    };
+                    }
                 }
 
         }

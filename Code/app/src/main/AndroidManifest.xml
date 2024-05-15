@@ -41,6 +41,9 @@
         <activity
             android:name=".auth.ChangePassword"
             android:exported="false"/>
+        <activity
+            android:name=".PostProjectActivity"
+            android:exported="false"/>
     </application>
 
 </manifest>
