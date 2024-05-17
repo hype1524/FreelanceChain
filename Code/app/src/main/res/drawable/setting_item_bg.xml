@@ -1,0 +1,17 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+            <solid android:color="#C2C2C2" />
+        </shape>
+    </item>
+
+    <item
+        android:left="0dp"
+        android:right="0dp"
+        android:top="2dp"
+        android:bottom="0dp">
+        <shape>
+            <solid android:color="?attr/colorOnPrimary" /> <!-- Màu nền của dialog -->
+        </shape>
+    </item>
+</layer-list>

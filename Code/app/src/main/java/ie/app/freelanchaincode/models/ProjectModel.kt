@@ -1,8 +1,11 @@
 package ie.app.freelanchaincode.models
 
 import android.service.autofill.CustomDescription
+import com.google.firebase.Timestamp
 
 data class ProjectModel (
+    var user_id : String? = null,
+    var time : Timestamp? = null,
     var id: String? = null,
     var owner : String? = null,
     var name: String? = null,
