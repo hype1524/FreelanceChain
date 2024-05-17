@@ -5,5 +5,6 @@ data class UserModel(
     var name: String? = null,
     var number: String? = null,
     var email: String? = null,
-    var signIn: Boolean = false
+    var signIn: Boolean = false,
+    var profilePictureUrl: String? = null
 )
