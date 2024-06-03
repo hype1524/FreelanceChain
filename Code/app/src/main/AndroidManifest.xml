@@ -46,6 +46,11 @@
         <activity
             android:name=".PostProjectActivity"
             android:exported="false"/>
+
+        <activity
+            android:name=".main.ChatActivity"
+            android:exported="false">
+        </activity>
     </application>
 
 </manifest>
