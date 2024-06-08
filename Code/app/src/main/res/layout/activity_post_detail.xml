@@ -14,7 +14,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="70dp"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -160,12 +160,54 @@
                     android:textStyle="italic" />
             </RelativeLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/setting_item_bg"
-                android:padding="5dp"></RelativeLayout>
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="10dp"
+                    android:orientation="horizontal">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/user_image2"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:src="@drawable/default_profile_picture"
+                        app:civ_border_color="@color/white"
+                        app:civ_border_width="2dp" />
+
+                    <EditText
+                        android:id="@+id/comment_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:hint="Thêm bình luận"
+                        android:layout_toRightOf="@id/user_image2"
+                        android:layout_marginRight="30dp"
+                        android:inputType="textMultiLine"
+                        android:maxLines="3"
+                        android:textSize="15sp" />
+
+                    <ImageView
+                        android:id="@+id/send_comment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/baseline_send_24"
+                        android:layout_centerVertical="true"/>
+                </RelativeLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
         </LinearLayout>
 
     </ScrollView>

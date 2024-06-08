@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import cn.pedant.SweetAlert.SweetAlertDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import ie.app.freelanchaincode.adapter.PostAdapter
@@ -29,6 +30,8 @@ class HomeFragment : Fragment() {
     private lateinit var postAdapter: PostAdapter
     private lateinit var projectList: ArrayList<ProjectModel>
     val db = FirebaseFirestore.getInstance()
+
+    private var sweetAlertDialog: SweetAlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +64,9 @@ class HomeFragment : Fragment() {
 
         val currentUser = FirebaseAuth.getInstance().currentUser
         val currentDate = Date()
+
+        sweetAlertDialog = SweetAlertDialog(requireContext(), SweetAlertDialog.PROGRESS_TYPE)
+        sweetAlertDialog?.show()
 
         val db = FirebaseFirestore.getInstance()
 
@@ -113,12 +119,14 @@ class HomeFragment : Fragment() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
+                sweetAlertDialog?.dismiss()
             }.addOnFailureListener {
                 Toast.makeText(
                     activity,
                     "The server is experiencing an error. Please come back later",
                     Toast.LENGTH_SHORT
                 ).show()
+                sweetAlertDialog?.dismiss()
             }
 
     }

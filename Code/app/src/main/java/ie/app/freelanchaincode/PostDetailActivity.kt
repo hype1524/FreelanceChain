@@ -8,22 +8,33 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import cn.pedant.SweetAlert.SweetAlertDialog
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import ie.app.freelanchaincode.adapter.CommentAdapter
+import ie.app.freelanchaincode.adapter.PostAdapter
 import ie.app.freelanchaincode.databinding.ActivityPostDetailBinding
 import ie.app.freelanchaincode.main.ChatActivity
+import ie.app.freelanchaincode.models.CommentModel
 import ie.app.freelanchaincode.models.LikeModel
 
 class PostDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPostDetailBinding
+    private var sweetAlertDialog: SweetAlertDialog? = null
+    private var commentList: ArrayList<CommentModel>? = null
+    private lateinit var commentAdapter: CommentAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPostDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        sweetAlertDialog = SweetAlertDialog(this@PostDetailActivity, SweetAlertDialog.PROGRESS_TYPE)
+        sweetAlertDialog?.show()
 
         supportActionBar?.title = intent.getStringExtra("PROJ_NAME")
 
@@ -61,6 +72,22 @@ class PostDetailActivity : AppCompatActivity() {
             return
         }
 
+        val commentRef = db.collection("Comments").document(projectId.toString()).collection("comment")
+
+        commentRef.get()
+            .addOnSuccessListener { result ->
+                val commentCount = result.size()
+                val formattedCommentCount = when {
+                    commentCount == 0 -> "0 comment"
+                    commentCount == 1 -> "1 comment"
+                    else -> "$commentCount comments"
+                }
+                binding.commentCount.text = formattedCommentCount
+            }
+            .addOnFailureListener { exception ->
+                Log.e("PostDetailActivity", "Error getting comment count", exception)
+            }
+
         val likesRef = db.collection("Likes").document(projectId.toString())
 
         likesRef.get().addOnSuccessListener { document ->
@@ -86,6 +113,7 @@ class PostDetailActivity : AppCompatActivity() {
                 binding.like.setColorFilter(binding.root.context.getColor(R.color.gray))
                 binding.likeCount.text = "0 like"
             }
+            sweetAlertDialog?.dismiss()
         }
 
         binding.like.setOnClickListener {
@@ -130,15 +158,25 @@ class PostDetailActivity : AppCompatActivity() {
                 Log.d("Firestore", "DocumentSnapshot data: ${document.data}")
                 binding.userName.text = document.getString("name").toString()
                 val profilePictureUrl = document.getString("profilePictureUrl")
-                // Load user image using Glide
                 Glide.with(binding.root.context)
                     .load(profilePictureUrl)
                     .into(binding.userImage)
+                Glide.with(binding.root.context)
+                    .load(profilePictureUrl)
+                    .into(binding.userImage2)
             } else {
                 Log.d("Firestore", "No such document")
             }
         }.addOnFailureListener { exception ->
             Log.d("Firestore", "get failed with ", exception)
+        }
+
+        binding.sendComment.setOnClickListener {
+            val commentContent = binding.commentContent.text.toString().trim()
+            if (projectId != null && currentUserId != null && commentContent.isNotEmpty()) {
+                saveComment(db, projectId, currentUserId, commentContent)
+            } else {
+            }
         }
 
         binding.projDesc.post {
@@ -179,5 +217,42 @@ class PostDetailActivity : AppCompatActivity() {
             intent.putExtras(bundle)
             this.startActivity(intent)
         }
+
+        getCommentList()
+
+        binding.rvComment.setHasFixedSize(true)
+        binding.rvComment.layoutManager = LinearLayoutManager(this)
+
+        commentList = ArrayList()
+        commentAdapter = CommentAdapter(this@PostDetailActivity)
+        binding.rvComment.adapter = commentAdapter
+    }
+
+    private fun saveComment(db: FirebaseFirestore, projectId: String, userId: String, commentContent: String) {
+        val commentData = hashMapOf(
+            "userId" to userId,
+            "commentContent" to commentContent,
+            "timestamp" to Timestamp.now()
+        )
+
+        db.collection("Comments").document(projectId)
+            .collection("comment")
+            .add(commentData)
+            .addOnSuccessListener { documentReference ->
+                Toast.makeText(this@PostDetailActivity, "Bình luận đã được đăng thành công.", Toast.LENGTH_SHORT).show()
+                binding.commentContent.setText("")
+            }
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Error adding comment", e)
+                Toast.makeText(this@PostDetailActivity, "Đã xảy ra lỗi khi đăng bình luận.", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+
+    private fun getCommentList() {
+        val db = FirebaseFirestore.getInstance()
+        val projectId = intent.getStringExtra("PROJECT_ID")
+
+
     }
 }

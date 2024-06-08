@@ -12,6 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import cn.pedant.SweetAlert.SweetAlertDialog
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -20,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import de.hdodenhof.circleimageview.CircleImageView
 import ie.app.freelanchaincode.PostDetailActivity
 import ie.app.freelanchaincode.R
+import ie.app.freelanchaincode.models.CommentModel
 import ie.app.freelanchaincode.models.LikeModel
 import ie.app.freelanchaincode.models.ProjectModel
 import java.text.NumberFormat
@@ -33,6 +35,8 @@ class PostAdapter(private val context: Context) :
 
     private var projectList: List<ProjectModel> = ArrayList()
     private var timeMarks: List<String>? = null
+
+    private var sweetAlertDialog: SweetAlertDialog? = null
 
     inner class ProjectModelViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var userImage: CircleImageView = itemView.findViewById(R.id.user_image)
@@ -71,6 +75,8 @@ class PostAdapter(private val context: Context) :
         val item = this.projectList[position]
 
         if (item.id != "") {
+            sweetAlertDialog = SweetAlertDialog(holder.itemView.context, SweetAlertDialog.PROGRESS_TYPE)
+            sweetAlertDialog?.show()
             holder.item.visibility = View.VISIBLE
 
             val db = FirebaseFirestore.getInstance()
@@ -81,9 +87,39 @@ class PostAdapter(private val context: Context) :
                 return
             }
 
+            val commentRef = db.collection("Comments").document(item.id.toString()).collection("comment")
+
+            commentRef.get()
+                .addOnSuccessListener { result ->
+                    var isUserCommented = false
+                    for (document in result) {
+                        val commentModel = document.toObject(CommentModel::class.java)
+                        if (commentModel.userId == currentUserId) {
+                            isUserCommented = true
+                            break
+                        }
+                    }
+                    if (isUserCommented) {
+                        holder.comment.setColorFilter(context.getColor(R.color.blue))
+                    } else {
+                        holder.comment.setColorFilter(context.getColor(R.color.gray))
+                    }
+
+                    val commentCount = result.size()
+                    val formattedCommentCount = when {
+                        commentCount == 0 -> "0 comment"
+                        commentCount == 1 -> "1 comment"
+                        else -> "$commentCount comments"
+                    }
+                    holder.commentCount.text = formattedCommentCount
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("PostDetailActivity", "Error getting comment count", exception)
+                }
+
+
             val likesRef = db.collection("Likes").document(item.id.toString())
 
-            // Update the like count and color
             likesRef.get().addOnSuccessListener { document ->
                 if (document.exists()) {
                     val likeModel = document.toObject(LikeModel::class.java)
@@ -239,6 +275,8 @@ class PostAdapter(private val context: Context) :
                 intent.putExtra("SKILL_REQUIRE", skillArray)
                 context.startActivity(intent)
             }
+
+            sweetAlertDialog?.dismiss()
         }
     }
 
