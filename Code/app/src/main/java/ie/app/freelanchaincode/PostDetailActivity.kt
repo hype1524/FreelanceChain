@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -22,12 +24,58 @@ import ie.app.freelanchaincode.databinding.ActivityPostDetailBinding
 import ie.app.freelanchaincode.main.ChatActivity
 import ie.app.freelanchaincode.models.CommentModel
 import ie.app.freelanchaincode.models.LikeModel
+import java.util.Date
 
 class PostDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPostDetailBinding
     private var sweetAlertDialog: SweetAlertDialog? = null
     private var commentList: ArrayList<CommentModel>? = null
     private lateinit var commentAdapter: CommentAdapter
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.share_post_button, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_share -> {
+                shareProjectDetails()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun shareProjectDetails() {
+        val projectId = intent.getStringExtra("PROJECT_ID")
+        val userId = intent.getStringExtra("USER_ID")
+        val projName = intent.getStringExtra("PROJ_NAME")
+        val projDesc = intent.getStringExtra("PROJ_DESC")
+        val projBudget = intent.getIntExtra("PROJ_BUDGET", 0)
+        val projAuction = intent.getStringExtra("PROJ_AUCTION")
+        val postTime = intent.getStringExtra("POST_TIME")
+        val userName = intent.getStringExtra("USER_NAME")
+        val skillArray = intent.getStringArrayExtra("SKILL_REQUIRE")
+
+        val shareContent = StringBuilder()
+        shareContent.append("PROJECT NAME: $projName\n")
+        shareContent.append("\nDESCRIPTION: $projDesc\n")
+        shareContent.append("\nBUDGET: $projBudget\n")
+        shareContent.append("\nAUCTION: $projAuction\n")
+        shareContent.append("\nPOSTED AT: $postTime\n")
+        shareContent.append("\nPOSTED BY: $userName\n")
+        shareContent.append("\nREQUIRED SKILLS: ${skillArray?.joinToString(", ")}")
+
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, shareContent.toString())
+            type = "text/plain"
+        }
+
+        startActivity(Intent.createChooser(shareIntent, "Share project details via"))
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +85,7 @@ class PostDetailActivity : AppCompatActivity() {
         sweetAlertDialog?.show()
 
         supportActionBar?.title = intent.getStringExtra("PROJ_NAME")
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val projectId = intent.getStringExtra("PROJECT_ID")
         val userId = intent.getStringExtra("USER_ID")
@@ -161,6 +210,16 @@ class PostDetailActivity : AppCompatActivity() {
                 Glide.with(binding.root.context)
                     .load(profilePictureUrl)
                     .into(binding.userImage)
+            } else {
+                Log.d("Firestore", "No such document")
+            }
+        }.addOnFailureListener { exception ->
+            Log.d("Firestore", "get failed with ", exception)
+        }
+
+        db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString()).get().addOnSuccessListener { document ->
+            if (document != null) {
+                val profilePictureUrl = document.getString("profilePictureUrl")
                 Glide.with(binding.root.context)
                     .load(profilePictureUrl)
                     .into(binding.userImage2)
@@ -248,11 +307,32 @@ class PostDetailActivity : AppCompatActivity() {
             }
     }
 
-
     private fun getCommentList() {
         val db = FirebaseFirestore.getInstance()
         val projectId = intent.getStringExtra("PROJECT_ID")
 
+        projectId?.let {
+            val commentRef = db.collection("Comments").document(projectId).collection("comment")
+            commentRef.addSnapshotListener { value, error ->
+                if (error != null) {
+                    Log.e("Firestore", "Listen failed.", error)
+                    return@addSnapshotListener
+                }
 
+                if (value != null) {
+                    val comments = ArrayList<CommentModel>()
+                    for (doc in value) {
+                        val userId = doc.getString("userId") ?: ""
+                        val commentContent = doc.getString("commentContent") ?: ""
+                        val timestamp = doc.getDate("timestamp") ?: Date()
+                        val comment = CommentModel(userId, commentContent, timestamp)
+                        comments.add(comment)
+                    }
+                    commentAdapter.setCommentList(comments)
+                } else {
+                    Log.d("Firestore", "No comments")
+                }
+            }
+        }
     }
 }
