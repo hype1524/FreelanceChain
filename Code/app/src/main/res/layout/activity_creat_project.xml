@@ -9,86 +9,97 @@
     android:layout_gravity="center"
     tools:context=".PostProjectActivity">
 
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="36sp"
-        android:text="Name Project"/>
+        android:layout_margin="5dp"
+        android:padding="15dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="36sp"
+                android:text="Name Project"/>
 
-    <EditText
-        android:id="@+id/nameEdit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Software project"/>
+            <EditText
+                android:id="@+id/nameEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Software project"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="36sp"
-        android:text="Description"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="36sp"
+                android:text="Description"/>
 
-    <EditText
-        android:id="@+id/DescriptionEdit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="What you want"/>
+            <EditText
+                android:id="@+id/DescriptionEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="What you want"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="36sp"
-        android:text="Budget" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="36sp"
+                android:text="Budget" />
 
-    <EditText
-        android:id="@+id/budgetEdit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="O"/>
+            <EditText
+                android:id="@+id/budgetEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="O"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="36sp"
-        android:text="Skill Require"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="36sp"
+                android:text="Skill Require"/>
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chipGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Enter skill you want"
-        >
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Enter skill you want"
+                >
 
-    </com.google.android.material.chip.ChipGroup>
+            </com.google.android.material.chip.ChipGroup>
 
 
-    <EditText
-        android:id="@+id/chipText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter chip text"/>
-    <Button
-        android:id="@+id/addChipButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Chip"/>
+            <EditText
+                android:id="@+id/chipText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter chip text"/>
+            <Button
+                android:id="@+id/addChipButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Chip"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="36sp"
-        android:text="Choose kind of Pay"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="36sp"
+                android:text="Choose kind of Pay"/>
 
-    <EditText
-        android:id="@+id/KindofPayEdit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Ethereum"/>
+            <EditText
+                android:id="@+id/KindofPayEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Ethereum"/>
 
-    <Button
-        android:id="@+id/submitProject"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Submit"
-        android:layout_gravity="center"/>
+            <Button
+                android:id="@+id/submitProject"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Submit"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

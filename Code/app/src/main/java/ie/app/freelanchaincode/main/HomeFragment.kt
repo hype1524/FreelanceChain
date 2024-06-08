@@ -62,41 +62,56 @@ class HomeFragment : Fragment() {
         val currentUser = FirebaseAuth.getInstance().currentUser
         val currentDate = Date()
 
-        db.collection("Project").document(currentUser?.uid.toString()).collection("item").get()
-            .addOnCompleteListener { task ->
-                for (doc in task.result) {
-                    val skillRequire = doc["skillRequire"] as List<String>?
-                    val projectModel = ProjectModel(
-                        id = doc.id,
-                        time = doc.getTimestamp("time")!!,
-                        name = doc.getString("name")!!,
-                        description = doc.getString("description")!!,
-                        kindOfPay = doc.getString("kindOfPay")!!,
-                        budget = doc.getLong("budget")!!.toInt(),
-                        user_id = doc.getString("user_id")!!,
-                        skillRequire = skillRequire ?: emptyList()
-                    )
-                    if (projectModel.time!!.toDate().compareTo(currentDate) > 0) {
-                        Toast.makeText(
-                            context,
-                            "There is a notification coming from future. Please check again",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        Log.e("Future notification", projectModel.id.toString())
-                        exit(0)
-                    } else {
-                        postList += projectModel
-                    }
-                    timeMarks += ""
-                }
-                Collections.sort(
-                    postList,
-                    Comparator<ProjectModel> { o1, o2 -> o2.time!!.compareTo(o1.time!!) })
-                postAdapter.setProjectList(postList)
-                postAdapter.setTimeMarks(timeMarks)
+        val db = FirebaseFirestore.getInstance()
 
-                if (postList.isNotEmpty()) {
-                    binding.noPost.text = "No more posts found"
+        db.collectionGroup("item")
+            .get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val postList = mutableListOf<ProjectModel>()
+                    val timeMarks = mutableListOf<String>()
+                    val currentDate = Date()
+
+                    for (doc in task.result) {
+                        val skillRequire = doc["skillRequire"] as List<String>?
+                        val projectModel = ProjectModel(
+                            id = doc.id,
+                            time = doc.getTimestamp("time")!!,
+                            name = doc.getString("name")!!,
+                            description = doc.getString("description")!!,
+                            kindOfPay = doc.getString("kindOfPay")!!,
+                            budget = doc.getLong("budget")!!.toInt(),
+                            user_id = doc.getString("user_id")!!,
+                            skillRequire = skillRequire ?: emptyList()
+                        )
+                        if (projectModel.time!!.toDate().compareTo(currentDate) > 0) {
+                            Toast.makeText(
+                                context,
+                                "There is a notification coming from the future. Please check again",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            Log.e("Future notification", projectModel.id.toString())
+                            exit(0)
+                        } else {
+                            postList += projectModel
+                        }
+                        timeMarks += ""
+                    }
+                    Collections.sort(
+                        postList,
+                        Comparator<ProjectModel> { o1, o2 -> o2.time!!.compareTo(o1.time!!) })
+                    postAdapter.setProjectList(postList)
+                    postAdapter.setTimeMarks(timeMarks)
+
+                    if (postList.isNotEmpty()) {
+                        binding.noPost.text = "No more posts found"
+                    }
+                } else {
+                    Toast.makeText(
+                        activity,
+                        "The server is experiencing an error. Please come back later",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }.addOnFailureListener {
                 Toast.makeText(
@@ -105,6 +120,7 @@ class HomeFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
+
     }
 
     companion object {

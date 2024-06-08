@@ -68,44 +68,44 @@ class PostAdapter(private val context: Context) :
 
             db.collection("Project").document(item.user_id.toString()).collection("item")
                 .document(item.id.toString()).get().addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val document = task.result
-                    if (document != null) {
-                        holder.projName.text = document.getString("name").toString()
-                        holder.projDesc.text = document.getString("description").toString()
-                        val budget = document.getLong("budget")
-                        val timestamp = document.getTimestamp("time")?.toDate()
-                        val now = Date()
-                        val diff = now.time - timestamp!!.time
+                    if (task.isSuccessful) {
+                        val document = task.result
+                        if (document != null) {
+                            holder.projName.text = document.getString("name").toString()
+                            holder.projDesc.text = document.getString("description").toString()
+                            val budget = document.getLong("budget")
+                            val timestamp = document.getTimestamp("time")?.toDate()
+                            val now = Date()
+                            val diff = now.time - timestamp!!.time
 
-                        val postTimeText = when {
-                            diff < DateUtils.HOUR_IN_MILLIS -> {
-                                val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
-                                "$minutes mins ago"
+                            val postTimeText = when {
+                                diff < DateUtils.HOUR_IN_MILLIS -> {
+                                    val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
+                                    "$minutes mins ago"
+                                }
+                                diff < DateUtils.DAY_IN_MILLIS -> {
+                                    val hours = TimeUnit.MILLISECONDS.toHours(diff)
+                                    "$hours hours ago"
+                                }
+                                else -> {
+                                    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                                    sdf.format(timestamp)
+                                }
                             }
-                            diff < DateUtils.DAY_IN_MILLIS -> {
-                                val hours = TimeUnit.MILLISECONDS.toHours(diff)
-                                "$hours hours ago"
-                            }
-                            else -> {
-                                val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                                sdf.format(timestamp)
-                            }
+
+                            holder.postTime.text = postTimeText
+                            val formattedBudget = NumberFormat.getNumberInstance(Locale.US).format(budget)
+                            holder.projBudget.text = "Budget: $formattedBudget đ"
+                            holder.projAuction.text = "Auction: "
+                            val skillRequire = document.get("skillRequire") as List<String>
+                            holder.tags.text = "Tags: " + skillRequire.joinToString(", ")
+                        } else {
+                            Log.d("Firestore", "No such document")
                         }
-
-                        holder.postTime.text = postTimeText
-                        val formattedBudget = NumberFormat.getNumberInstance(Locale.US).format(budget)
-                        holder.projBudget.text = "Budget: $formattedBudget đ"
-                        holder.projAuction.text = "Auction: "
-                        val skillRequire = document.get("skillRequire") as List<String>
-                        holder.tags.text = "Tags: " + skillRequire.joinToString(", ")
                     } else {
-                        Log.d("Firestore", "No such document")
+                        Log.d("Firestore", "get failed with ", task.exception)
                     }
-                } else {
-                    Log.d("Firestore", "get failed with ", task.exception)
                 }
-            }
 
             val docRef = db.collection("User").document(item.user_id.toString())
             docRef.get().addOnSuccessListener { document ->
