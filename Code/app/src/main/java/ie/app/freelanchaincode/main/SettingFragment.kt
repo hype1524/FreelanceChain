@@ -14,6 +14,7 @@ import com.google.firebase.firestore.SetOptions
 import ie.app.freelanchaincode.R
 import ie.app.freelanchaincode.auth.EditProfileActivity
 import ie.app.freelanchaincode.auth.LoginActivity
+import ie.app.freelanchaincode.auth.ProfileActivity
 import ie.app.freelanchaincode.databinding.FragmentSettingBinding
 
 class SettingFragment : Fragment() {
@@ -36,7 +37,7 @@ class SettingFragment : Fragment() {
         loadUserProfile()
 
         binding.profileButton.setOnClickListener {
-            Intent(this@SettingFragment.context, EditProfileActivity::class.java).also { startActivity(it) }
+            Intent(this@SettingFragment.context, ProfileActivity::class.java).also { startActivity(it) }
         }
 
         binding.signOut.setOnClickListener {
