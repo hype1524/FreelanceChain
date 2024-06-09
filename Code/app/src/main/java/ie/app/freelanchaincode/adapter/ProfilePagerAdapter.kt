@@ -7,16 +7,16 @@ import ie.app.freelanchaincode.posts.CommentedPostFragment
 import ie.app.freelanchaincode.posts.LikedPostFragment
 import ie.app.freelanchaincode.posts.UserPostFragment
 
-class ProfilePagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
+class ProfilePagerAdapter(private val userId: String?, fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
     private val tabTitles = arrayOf("Personal", "Liked", "Commented")
 
     override fun getItemCount(): Int = tabTitles.size
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> UserPostFragment()
-            1 -> LikedPostFragment()
-            else -> CommentedPostFragment()
+            0 -> UserPostFragment.newInstance(userId)
+            1 -> LikedPostFragment.newInstance(userId)
+            else -> CommentedPostFragment.newInstance(userId)
         }
     }
 
@@ -25,10 +25,11 @@ class ProfilePagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAda
     }
 }
 
-class ProfilePagerAdapterSingleFragment(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
+class ProfilePagerAdapterSingleFragment(private val userId: String?, fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
     override fun getItemCount(): Int = 1
 
     override fun createFragment(position: Int): Fragment {
-        return UserPostFragment()
+        return UserPostFragment.newInstance(userId ?: "")
     }
 }
+

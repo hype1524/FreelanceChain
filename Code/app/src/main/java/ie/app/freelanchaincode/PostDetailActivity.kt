@@ -210,9 +210,11 @@ class PostDetailActivity : AppCompatActivity() {
                 Log.d("Firestore", "DocumentSnapshot data: ${document.data}")
                 binding.userName.text = document.getString("name").toString()
                 val profilePictureUrl = document.getString("profilePictureUrl")
-                Glide.with(binding.root.context)
-                    .load(profilePictureUrl)
-                    .into(binding.userImage)
+                if (!profilePictureUrl.isNullOrEmpty()) {
+                    Glide.with(binding.root.context)
+                        .load(profilePictureUrl)
+                        .into(binding.userImage)
+                }
             } else {
                 Log.d("Firestore", "No such document")
             }
@@ -223,9 +225,11 @@ class PostDetailActivity : AppCompatActivity() {
         db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString()).get().addOnSuccessListener { document ->
             if (document != null) {
                 val profilePictureUrl = document.getString("profilePictureUrl")
-                Glide.with(binding.root.context)
-                    .load(profilePictureUrl)
-                    .into(binding.userImage2)
+                if (!profilePictureUrl.isNullOrEmpty()) {
+                    Glide.with(binding.root.context)
+                        .load(profilePictureUrl)
+                        .into(binding.userImage2)
+                }
             } else {
                 Log.d("Firestore", "No such document")
             }

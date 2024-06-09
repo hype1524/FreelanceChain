@@ -21,8 +21,9 @@ import ie.app.freelanchaincode.MainActivity
 import ie.app.freelanchaincode.PostProjectActivity
 import ie.app.freelanchaincode.R
 import ie.app.freelanchaincode.databinding.ActivityProfileBinding
+import ie.app.freelanchaincode.posts.UserPostFragment
 
-class ProfileActivity : AppCompatActivity() {
+class ProfileActivity : AppCompatActivity(), UserPostFragment.OnPostCountChangeListener {
     private lateinit var binding: ActivityProfileBinding
     private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     private val storage: FirebaseStorage by lazy { FirebaseStorage.getInstance() }
@@ -58,9 +59,9 @@ class ProfileActivity : AppCompatActivity() {
         val tabLayout: TabLayout = findViewById(R.id.tab_layout)
 
         val pagerAdapter = if (userId != null && userId != auth.currentUser?.uid) {
-            ProfilePagerAdapterSingleFragment(this)
+            ProfilePagerAdapterSingleFragment(userId, this)
         } else {
-            ProfilePagerAdapter(this)
+            ProfilePagerAdapter(null, this)
         }
         viewPager.adapter = pagerAdapter
 
@@ -80,7 +81,15 @@ class ProfileActivity : AppCompatActivity() {
         }.attach()
 
         binding.rlEditProfileImg.setOnClickListener {
-            pickImageLauncher.launch("image/*")
+            if (userId != null && userId != auth.currentUser?.uid) {
+                Toast.makeText(
+                    this,
+                    "You are not allowed to update profile picture.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                pickImageLauncher.launch("image/*")
+            }
         }
 
         binding.addPostBtn.setOnClickListener {
@@ -102,6 +111,13 @@ class ProfileActivity : AppCompatActivity() {
             loadProfilePictureByCurrentUser()
         }
     }
+
+    override fun onPostCountChanged(count: Int) {
+        val postText = if (count == 0 || count == 1) "post" else "posts"
+        binding.postCount.text = "$count"
+        binding.postText.text = postText
+    }
+
     private fun loadProfilePictureByUserId(userId: String) {
         val docRef = FirebaseFirestore.getInstance().collection("User").document(userId)
 
@@ -156,12 +172,28 @@ class ProfileActivity : AppCompatActivity() {
                     loadProfilePictureByCurrentUser()
                 }
                 val viewPager: ViewPager2 = findViewById(R.id.pager)
-                val pagerAdapter = ProfilePagerAdapter(this)
+                val tabLayout: TabLayout = findViewById(R.id.tab_layout)
+
+                val pagerAdapter = if (userId != null && userId != auth.currentUser?.uid) {
+                    ProfilePagerAdapterSingleFragment(userId, this)
+                } else {
+                    ProfilePagerAdapter(null, this)
+                }
                 viewPager.adapter = pagerAdapter
 
-                val tabLayout: TabLayout = findViewById(R.id.tab_layout)
+                val bundle = Bundle()
+                bundle.putString("USER_ID", userId)
+                for (i in 0 until pagerAdapter.itemCount) {
+                    val fragment = pagerAdapter.createFragment(i)
+                    fragment.arguments = bundle
+                }
+
                 TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-                    tab.text = pagerAdapter.getTabTitle(position)
+                    if (pagerAdapter is ProfilePagerAdapter) {
+                        tab.text = pagerAdapter.getTabTitle(position)
+                    } else {
+                        binding.tabLayout.visibility = View.GONE
+                    }
                 }.attach()
             }
         }
@@ -171,14 +203,13 @@ class ProfileActivity : AppCompatActivity() {
         if (!isDestroyed) {
             if (!profilePictureUrl.isNullOrEmpty()) {
                 Glide.with(this).load(profilePictureUrl).into(binding.profileImg)
-            } else {
-                Glide.with(this).load(R.drawable.default_profile_picture).into(binding.profileImg)
             }
             binding.username.text = userName ?: "Unknown User"
             binding.aboutInfoText.text = "See $userName's About Info"
             if (userId != null && userId != auth.currentUser?.uid) {
                 binding.personalInfo.visibility = View.GONE
                 binding.guestInfo.visibility = View.VISIBLE
+                binding.cameraButton.visibility = View.GONE
             } else {
                 binding.personalInfo.visibility = View.VISIBLE
                 binding.guestInfo.visibility = View.GONE
@@ -191,14 +222,14 @@ class ProfileActivity : AppCompatActivity() {
         val reference = storage.reference.child("images/${user.uid}")
 
         reference.putFile(uri).addOnSuccessListener {
-                reference.downloadUrl.addOnSuccessListener { downloadUrl ->
-                    updateProfilePictureUrl(downloadUrl.toString())
-                }
-            }.addOnFailureListener { exception ->
-                Toast.makeText(
-                    this, "Failed to upload image: ${exception.message}", Toast.LENGTH_SHORT
-                ).show()
+            reference.downloadUrl.addOnSuccessListener { downloadUrl ->
+                updateProfilePictureUrl(downloadUrl.toString())
             }
+        }.addOnFailureListener { exception ->
+            Toast.makeText(
+                this, "Failed to upload image: ${exception.message}", Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     private fun updateProfilePictureUrl(url: String) {

@@ -54,7 +54,7 @@ class PostAdapter(private val context: Context) :
         var item: CardView = itemView.findViewById(R.id.post_item)
         var likeCount: TextView = itemView.findViewById(R.id.like_count)
         var cardView: CardView = itemView.findViewById(R.id.post_item)
-        var userInfo:LinearLayout = itemView.findViewById(R.id.user_info)
+        var userInfo: LinearLayout = itemView.findViewById(R.id.user_info)
         var commentCount: TextView = itemView.findViewById(R.id.comment_count)
     }
 
@@ -69,8 +69,7 @@ class PostAdapter(private val context: Context) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectModelViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.post_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.post_item, parent, false)
         return ProjectModelViewHolder(view)
     }
 
@@ -78,7 +77,8 @@ class PostAdapter(private val context: Context) :
         val item = this.projectList[position]
 
         if (item.id != "") {
-            sweetAlertDialog = SweetAlertDialog(holder.itemView.context, SweetAlertDialog.PROGRESS_TYPE)
+            sweetAlertDialog =
+                SweetAlertDialog(holder.itemView.context, SweetAlertDialog.PROGRESS_TYPE)
             sweetAlertDialog?.show()
             holder.item.visibility = View.VISIBLE
 
@@ -90,10 +90,10 @@ class PostAdapter(private val context: Context) :
                 return
             }
 
-            val commentRef = db.collection("Comments").document(item.id.toString()).collection("comment")
+            val commentRef =
+                db.collection("Comments").document(item.id.toString()).collection("comment")
 
-            commentRef.get()
-                .addOnSuccessListener { result ->
+            commentRef.get().addOnSuccessListener { result ->
                     var isUserCommented = false
                     for (document in result) {
                         val commentModel = document.toObject(CommentModel::class.java)
@@ -115,8 +115,7 @@ class PostAdapter(private val context: Context) :
                         else -> "$commentCount comments"
                     }
                     holder.commentCount.text = formattedCommentCount
-                }
-                .addOnFailureListener { exception ->
+                }.addOnFailureListener { exception ->
                     Log.e("PostDetailActivity", "Error getting comment count", exception)
                 }
 
@@ -177,11 +176,16 @@ class PostAdapter(private val context: Context) :
                         } else {
                         }
                     }.addOnFailureListener { e ->
-                        Toast.makeText(context, "Error liking post: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "Error liking post: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         Log.e("Firestore", "Error setting like: ", e)
                     }
                 }.addOnFailureListener { e ->
-                    Toast.makeText(context, "Error getting likes: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Error getting likes: ${e.message}", Toast.LENGTH_SHORT)
+                        .show()
                     Log.e("Firestore", "Error getting document: ", e)
                 }
             }
@@ -196,17 +200,22 @@ class PostAdapter(private val context: Context) :
                             val budget = document.getLong("budget")
                             val timestamp = document.getTimestamp("time")?.toDate()
                             val now = Date()
-                            val diff = now.time - timestamp!!.time
-
+                            val diff = if (timestamp != null) {
+                                now.time - timestamp.time
+                            } else {
+                                0 // Default value
+                            }
                             val postTimeText = when {
                                 diff < DateUtils.HOUR_IN_MILLIS -> {
                                     val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
                                     "$minutes mins ago"
                                 }
+
                                 diff < DateUtils.DAY_IN_MILLIS -> {
                                     val hours = TimeUnit.MILLISECONDS.toHours(diff)
                                     "$hours hours ago"
                                 }
+
                                 else -> {
                                     val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                                     sdf.format(timestamp)
@@ -214,7 +223,8 @@ class PostAdapter(private val context: Context) :
                             }
 
                             holder.postTime.text = postTimeText
-                            val formattedBudget = NumberFormat.getNumberInstance(Locale.US).format(budget)
+                            val formattedBudget =
+                                NumberFormat.getNumberInstance(Locale.US).format(budget)
                             holder.projBudget.text = "Budget: $formattedBudget đ"
                             holder.projAuction.text = "Auction: "
                             val skillRequire = document.get("skillRequire") as List<String>
@@ -240,10 +250,9 @@ class PostAdapter(private val context: Context) :
                     holder.userName.text = document.getString("name").toString()
                     val profilePictureUrl = document.getString("profilePictureUrl")
                     // Load user image using Glide
-                    Glide.with(context)
-                        .load(profilePictureUrl)
-                        .into(holder.userImage)
-                } else {
+                    if (!profilePictureUrl.isNullOrEmpty()) {
+                        Glide.with(context).load(profilePictureUrl).into(holder.userImage)
+                    }                } else {
                     Log.d("Firestore", "No such document")
                 }
             }.addOnFailureListener { exception ->
