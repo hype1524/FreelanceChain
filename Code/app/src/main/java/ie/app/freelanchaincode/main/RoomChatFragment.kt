@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import ie.app.freelanchaincode.RoomChatUtil
 import ie.app.freelanchaincode.adapter.RoomChatAdapter
 import ie.app.freelanchaincode.databinding.FragmentRoomchatBinding
 import ie.app.freelanchaincode.models.MessageModel
@@ -42,71 +43,17 @@ class RoomChatFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.roomChatCreateBtn.setOnClickListener {
             val temp = listOf(currentUser!!)
-            onCreateRoomChat("Room chat demo", temp)
+            RoomChatUtil.onCreateRoomChat(temp)
         }
-
-//        navController = findNavController()
-//        adapter = RoomChatAdapter(navController)
         adapter = RoomChatAdapter(requireContext())
 
         binding.rvChatList.adapter = adapter
 
-        getRoomChatByUserId(currentUser!!)
+        RoomChatUtil.getRoomChatByUserId(currentUser!!, { chatRooms ->
+            adapter.setList(chatRooms)
+            adapter.notifyDataSetChanged()
+        })
 
 
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private fun getRoomChatByUserId(userId: String) {
-        var chatRooms : List<RoomChatModel>
-        FirebaseFirestore.getInstance()
-            .collection("RoomChat")
-            .whereArrayContains("members", userId)
-            .get()
-            .addOnSuccessListener { documents ->
-                chatRooms = documents.mapNotNull { document ->
-                    document.toObject(RoomChatModel::class.java)
-                }
-                adapter.setList(chatRooms)
-                adapter.notifyDataSetChanged()
-            }
-            .addOnFailureListener { e ->
-                Log.e("GetRoomChat", "GetRoom chat fail: $e")
-            }
-    }
-
-    private fun getRoomChatByRoomId(roomChatId: String, onComplete: (RoomChatModel?) -> Unit, onFailure: (Exception) -> Unit) {
-        FirebaseFirestore.getInstance()
-            .collection("RoomChat")
-            .document(roomChatId).get()
-            .addOnSuccessListener { documents ->
-                val roomChat = documents.toObject(RoomChatModel::class.java)
-                onComplete(roomChat)
-            }
-            .addOnFailureListener {
-                onFailure(it)
-            }
-    }
-
-    private fun onCreateRoomChat(name: String, members: List<String>, messages: List<MessageModel> = emptyList()) {
-        if (members.isEmpty()) {
-            Log.w("On Create room chat", "members of room is empty")
-        } else {
-            val newRoomChat = RoomChatModel(
-                name = name,
-                members = members,
-                messages = messages
-            )
-
-            FirebaseFirestore.getInstance()
-                .collection("RoomChat")
-                .add(newRoomChat)
-                .addOnSuccessListener {
-                    Log.d("On Create room chat", "")
-                }
-                .addOnFailureListener { e ->
-                    Log.e("On Create room chat", "create new room chat fail $e")
-                }
-        }
     }
 }
