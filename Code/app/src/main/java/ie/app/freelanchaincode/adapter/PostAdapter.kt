@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
@@ -21,6 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import de.hdodenhof.circleimageview.CircleImageView
 import ie.app.freelanchaincode.PostDetailActivity
 import ie.app.freelanchaincode.R
+import ie.app.freelanchaincode.auth.ProfileActivity
 import ie.app.freelanchaincode.models.CommentModel
 import ie.app.freelanchaincode.models.LikeModel
 import ie.app.freelanchaincode.models.ProjectModel
@@ -52,6 +54,7 @@ class PostAdapter(private val context: Context) :
         var item: CardView = itemView.findViewById(R.id.post_item)
         var likeCount: TextView = itemView.findViewById(R.id.like_count)
         var cardView: CardView = itemView.findViewById(R.id.post_item)
+        var userInfo:LinearLayout = itemView.findViewById(R.id.user_info)
         var commentCount: TextView = itemView.findViewById(R.id.comment_count)
     }
 
@@ -261,6 +264,14 @@ class PostAdapter(private val context: Context) :
                 intent.putExtra("SKILL_REQUIRE", skillArray)
                 context.startActivity(intent)
             }
+
+            holder.userInfo.setOnClickListener {
+                val intent = Intent(context, ProfileActivity::class.java)
+                intent.putExtra("USER_ID", item.user_id)
+                context.startActivity(intent)
+                Log.d("PUTTTTTT", "User ID: ${item.user_id}")
+            }
+
             holder.cardView.setOnClickListener {
                 val intent = Intent(context, PostDetailActivity::class.java)
                 intent.putExtra("PROJECT_ID", item.id)

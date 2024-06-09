@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import ie.app.freelanchaincode.adapter.CommentAdapter
 import ie.app.freelanchaincode.adapter.PostAdapter
+import ie.app.freelanchaincode.auth.ProfileActivity
 import ie.app.freelanchaincode.databinding.ActivityPostDetailBinding
 import ie.app.freelanchaincode.main.ChatActivity
 import ie.app.freelanchaincode.models.CommentModel
@@ -97,16 +98,6 @@ class PostDetailActivity : AppCompatActivity() {
         val userName = intent.getStringExtra("USER_NAME")
         val skillArray = intent.getStringArrayExtra("SKILL_REQUIRE")
 
-        Log.d("PostDetailActivity", "Project ID: $projectId")
-        Log.d("PostDetailActivity", "User ID: $userId")
-        Log.d("PostDetailActivity", "Project Name: $projName")
-        Log.d("PostDetailActivity", "Project Description: $projDesc")
-        Log.d("PostDetailActivity", "Project Budget: $projBudget")
-        Log.d("PostDetailActivity", "Project Auction: $projAuction")
-        Log.d("PostDetailActivity", "Post Time: $postTime")
-        Log.d("PostDetailActivity", "User Name: $userName")
-        Log.d("PostDetailActivity", "Skills: ${skillArray?.joinToString()}")
-
         findViewById<TextView>(R.id.proj_name).text = projName
         findViewById<TextView>(R.id.proj_desc).text = projDesc
         findViewById<TextView>(R.id.proj_budget).text = "Budget: " + projBudget.toString()
@@ -163,6 +154,18 @@ class PostDetailActivity : AppCompatActivity() {
                 binding.likeCount.text = "0 like"
             }
             sweetAlertDialog?.dismiss()
+        }
+
+        binding.userInfo.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
+            intent.putExtra("USER_ID", userId)
+            this.startActivity(intent)
+        }
+
+        binding.userImage2.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
+            intent.putExtra("USER_ID", currentUserId)
+            this.startActivity(intent)
         }
 
         binding.like.setOnClickListener {
