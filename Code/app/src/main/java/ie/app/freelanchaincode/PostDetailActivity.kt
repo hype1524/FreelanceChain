@@ -270,11 +270,23 @@ class PostDetailActivity : AppCompatActivity() {
 
         binding.chatButton.setOnClickListener {
             val intent = Intent(this, ChatActivity::class.java)
-            val bundle = Bundle().apply {
-                putString("roomChatId", projectId)
+            if (userId != null) {
+                if (userId != currentUserId) {
+                    val members: List<String> = listOf(currentUserId, userId)
+                    RoomChatUtil.getOrCreateRoomChatByMembers(members) { roomChatId ->
+                        val bundle = Bundle().apply {
+                            putString("roomChatId", roomChatId)
+                        }
+                        intent.putExtras(bundle)
+                        this.startActivity(intent)
+                    }
+                } else {
+                    Toast.makeText(this,"You can't message with yourself",Toast.LENGTH_SHORT).show()
+                }
             }
-            intent.putExtras(bundle)
-            this.startActivity(intent)
+            else {
+                Toast.makeText( this,"Owner of this project not found", Toast.LENGTH_SHORT).show()
+            }
         }
 
         getCommentList()
