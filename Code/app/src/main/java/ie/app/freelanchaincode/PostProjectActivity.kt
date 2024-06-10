@@ -1,5 +1,6 @@
 package ie.app.freelanchaincode
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -105,6 +106,8 @@ class PostProjectActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
+        val resultIntent = Intent()
+        setResult(RESULT_OK, resultIntent)
         finish()
     }
 

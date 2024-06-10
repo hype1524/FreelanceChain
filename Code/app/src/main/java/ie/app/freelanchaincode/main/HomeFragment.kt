@@ -59,11 +59,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun getPostList() {
-        var postList: List<ProjectModel> = ArrayList<ProjectModel>()
-        var timeMarks: List<String> = ArrayList()
-
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        val currentDate = Date()
 
         sweetAlertDialog = SweetAlertDialog(requireContext(), SweetAlertDialog.PROGRESS_TYPE)
         sweetAlertDialog?.show()
