@@ -28,7 +28,6 @@ class RoomChatAdapter(private val context: Context) : RecyclerView.Adapter<RoomC
 
     private var listOfChats = listOf<RoomChatModel>()
     private var chatShitModal = RoomChatModel()
-    private val userProfilePictureCache = mutableMapOf<String, String>()
     private val currentUser = FirebaseAuth.getInstance().currentUser
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyChatListHolder {

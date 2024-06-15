@@ -18,7 +18,6 @@ import ie.app.freelanchaincode.main.SettingFragment
 class MainActivity : AppCompatActivity() {
     private lateinit var button: Button
     private lateinit var binding: ActivityMainBinding
-//    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,12 +47,6 @@ class MainActivity : AppCompatActivity() {
             replaceFragment(ProjectFragment())
         }
     }
-
-//    override fun onSupportNavigateUp(): Boolean {
-//        navController = findNavController(R.id.fragmentContainerView)
-//
-//        return navController.navigateUp() || super.onSupportNavigateUp()
-//    }
 
     private fun replaceFragment(fragment: Fragment) {
         val fragmentManager = supportFragmentManager

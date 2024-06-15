@@ -1,9 +1,13 @@
 package ie.app.freelanchaincode
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient
+import co.elastic.clients.elasticsearch.core.SearchResponse
 import co.elastic.clients.json.jackson.JacksonJsonpMapper
 import co.elastic.clients.transport.ElasticsearchTransport
 import co.elastic.clients.transport.rest_client.RestClientTransport
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
@@ -49,6 +53,39 @@ class ElasticsearchService {
                 throw e
             }
         }
+
+        fun getSearchResult(data: String, indexName: String, fields: List<String>, onResult: (List<String>) -> Unit) {
+            val responses: SearchResponse<ObjectNode> = client.search(
+                { s ->
+                    s
+                        .index(indexName)
+                        .query { q ->
+                            q
+                                .multiMatch { t ->
+                                    t
+                                        .query(data)
+                                        .fields(fields)
+                                        .fuzziness("Auto")
+                                }
+                        }
+                },
+                ObjectNode::class.java
+            )
+            val uids = mutableListOf<String>()
+            val objectMapper = ObjectMapper()
+
+            for (hit in responses.hits().hits()) {
+                val sourceField = hit.source()
+                if (sourceField != null) {
+                    val sourceString = objectMapper.writeValueAsString(sourceField)
+                    val jsonNode: JsonNode = objectMapper.readTree(sourceString)
+                    val uid = jsonNode.get("uid").asText()
+                    uids.add(uid)
+                }
+            }
+            onResult(uids)
+        }
+
     }
 
 }

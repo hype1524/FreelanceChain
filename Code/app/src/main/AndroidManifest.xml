@@ -62,6 +62,9 @@
         <activity
             android:name=".main.ChatActivity"
             android:exported="false" />
+        <activity
+            android:name=".main.SearchActivity"
+            android:exported="false"/>
     </application>
 
 </manifest>
