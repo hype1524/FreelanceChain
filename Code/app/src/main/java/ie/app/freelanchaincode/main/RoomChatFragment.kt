@@ -23,7 +23,6 @@ import ie.app.freelanchaincode.models.RoomChatModel
 class RoomChatFragment : Fragment() {
     private lateinit var adapter : RoomChatAdapter
     private lateinit var binding: FragmentRoomchatBinding
-//    private lateinit var navController: NavController
 
     private var currentUser = FirebaseAuth.getInstance().currentUser?.uid
     override fun onCreateView(
@@ -41,10 +40,6 @@ class RoomChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.roomChatCreateBtn.setOnClickListener {
-            val temp = listOf(currentUser!!)
-            RoomChatUtil.onCreateRoomChat(temp)
-        }
         adapter = RoomChatAdapter(requireContext())
 
         binding.rvChatList.adapter = adapter

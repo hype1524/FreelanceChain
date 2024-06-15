@@ -42,7 +42,7 @@ class MessageAdapter() : RecyclerView.Adapter<MessageHolder>() {
 
         holder.messageText.text = message.content
         val timestamp: Date? = message.createdAt?.toDate()
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
         val formattedDate = timestamp?.let { sdf.format(it) } ?: "Unknown time"
 
         holder.timeOfSent.text = formattedDate

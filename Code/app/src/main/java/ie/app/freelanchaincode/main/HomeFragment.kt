@@ -1,5 +1,6 @@
 package ie.app.freelanchaincode.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -54,6 +55,10 @@ class HomeFragment : Fragment() {
         projectList = ArrayList()
         postAdapter = PostAdapter(requireContext())
         binding.rvHomePost.adapter = postAdapter
+        binding.search.setOnClickListener {
+            val intent = Intent(context, SearchActivity::class.java)
+            startActivity(intent)
+        }
 
         return binding.root
     }

@@ -17,11 +17,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/room_chat_create_btn"/>
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_chat_list"
                 android:layout_width="match_parent"

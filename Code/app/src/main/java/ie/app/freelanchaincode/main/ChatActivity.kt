@@ -12,6 +12,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -105,9 +106,10 @@ import ie.app.freelanchaincode.models.MessageModel
 class ChatActivity() : AppCompatActivity() {
 
     private lateinit var adapter : MessageAdapter
-    lateinit var toolbar: Toolbar
     private lateinit var binding: ActivityChatBinding
     private lateinit var roomChatId: String
+    private var partnerProfilePictureUrl: String ? = null
+    private var partnerName: String ? = null
     private var auth = FirebaseAuth.getInstance().currentUser?.uid
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,6 +119,8 @@ class ChatActivity() : AppCompatActivity() {
         val bundle = intent.extras
         if (bundle != null) {
             roomChatId = bundle.getString("roomChatId")!!
+            partnerProfilePictureUrl = bundle.getString("partnerProfilePictureUrl")
+            partnerName = bundle.getString("partnerName")
         }
 
         setContentView(binding.root)
@@ -126,6 +130,21 @@ class ChatActivity() : AppCompatActivity() {
         binding.chatBackBtn.setOnClickListener {
             onBackPressed()
         }
+
+        if (partnerProfilePictureUrl != null) {
+            Glide.with(this).load(partnerProfilePictureUrl).into(binding.chatImageViewUser)
+        } else {
+            Glide.with(this).load(R.drawable.default_profile_picture).into(binding.chatImageViewUser)
+        }
+
+        if (partnerName != null) {
+            binding.chatUserName.text = partnerName
+        } else {
+            binding.chatUserName.text = "User Name"
+        }
+
+
+
 
         adapter = MessageAdapter()
 
