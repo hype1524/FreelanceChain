@@ -55,8 +55,13 @@ class RoomChatAdapter(private val context: Context) : RecyclerView.Adapter<RoomC
 
         fetchPartner(roomChat, currentUser?.uid.toString()) { user ->
             if (user!= null) {
-                Glide.with(context).load(user.profilePictureUrl).into(holder.imageView)
                 holder.chatName.text = user.name
+                if (user.profilePictureUrl != null) {
+                    Glide.with(context).load(user.profilePictureUrl).into(holder.imageView)
+                }
+                else {
+                    Glide.with(context).load(R.drawable.default_profile_picture).into(holder.imageView)
+                }
             }
             else {
                 Glide.with(context).load(R.drawable.default_profile_picture).into(holder.imageView)

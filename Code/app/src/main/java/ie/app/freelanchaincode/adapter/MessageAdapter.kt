@@ -1,9 +1,11 @@
 package ie.app.freelanchaincode.adapter
 
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -37,15 +39,19 @@ class MessageAdapter() : RecyclerView.Adapter<MessageHolder>() {
     override fun onBindViewHolder(holder: MessageHolder, position: Int) {
         val message = listOfMessage[position]
 
-//        holder.messageText.visibility = View.VISIBLE
-//        holder.timeOfSent.visibility = View.VISIBLE
-
         holder.messageText.text = message.content
         val timestamp: Date? = message.createdAt?.toDate()
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
         val formattedDate = timestamp?.let { sdf.format(it) } ?: "Unknown time"
 
         holder.timeOfSent.text = formattedDate
+
+        // Align the item to the right if the message is sent by the current user
+        if (getItemViewType(position) == RIGHT) {
+            val params = holder.itemView.layoutParams as RecyclerView.LayoutParams
+            params.width = RecyclerView.LayoutParams.WRAP_CONTENT
+            holder.itemView.layoutParams = params
+        }
     }
 
     override fun getItemViewType(position: Int) =

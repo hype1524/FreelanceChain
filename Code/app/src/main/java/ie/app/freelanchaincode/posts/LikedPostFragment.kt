@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.pedant.SweetAlert.SweetAlertDialog
-import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldPath
@@ -18,10 +17,8 @@ import com.google.firebase.firestore.QuerySnapshot
 import ie.app.freelanchaincode.adapter.PostAdapter
 import ie.app.freelanchaincode.databinding.FragmentLikedPostBinding
 import ie.app.freelanchaincode.models.ProjectModel
-import java.lang.System.exit
 import java.util.Collections
 import java.util.Date
-import kotlin.system.exitProcess
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -69,6 +66,7 @@ class LikedPostFragment : Fragment() {
 
         return binding.root
     }
+
     private fun getPostList() {
         val db = FirebaseFirestore.getInstance()
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
@@ -91,17 +89,28 @@ class LikedPostFragment : Fragment() {
                     sweetAlertDialog?.dismiss()
 
                     if (likedProjectIds.isNotEmpty()) {
-                        db.collectionGroup("item")
-                            .get()
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    val postList = mutableListOf<ProjectModel>()
-                                    val timeMarks = mutableListOf<String>()
-                                    val currentDate = Date()
+                        val tasks = if (likedProjectIds.size > 10) {
+                            likedProjectIds.chunked(10).map { chunk ->
+                                db.collection("Project").whereIn(FieldPath.documentId(), chunk)
+                                    .get()
+                            }
+                        } else {
+                            listOf(
+                                db.collection("Project")
+                                    .whereIn(FieldPath.documentId(), likedProjectIds).get()
+                            )
+                        }
 
-                                    for (doc in task.result) {
+                        Tasks.whenAllSuccess<QuerySnapshot>(tasks).addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                val postList = mutableListOf<ProjectModel>()
+                                val timeMarks = mutableListOf<String>()
+                                val currentDate = Date()
+
+                                for (querySnapshot in task.result) {
+                                    for (doc in querySnapshot.documents) {
                                         val skillRequire = doc["skillRequire"] as List<String>?
-                                        val projectModelTest = ProjectModel(
+                                        val projectModel = ProjectModel(
                                             id = doc.id,
                                             time = doc.getTimestamp("time")!!,
                                             name = doc.getString("name")!!,
@@ -111,68 +120,47 @@ class LikedPostFragment : Fragment() {
                                             user_id = doc.getString("user_id")!!,
                                             skillRequire = skillRequire ?: emptyList()
                                         )
-                                        db.collection("Project").document(projectModelTest.user_id.toString()).collection("item").whereIn(FieldPath.documentId(), likedProjectIds).get()
-                                            .addOnCompleteListener { task ->
-                                                if (task.isSuccessful) {
-
-                                                    for (doc in task.result) {
-                                                        val skillRequire = doc["skillRequire"] as List<String>?
-                                                        val projectModel = ProjectModel(
-                                                            id = doc.id,
-                                                            time = doc.getTimestamp("time")!!,
-                                                            name = doc.getString("name")!!,
-                                                            description = doc.getString("description")!!,
-                                                            kindOfPay = doc.getString("kindOfPay")!!,
-                                                            budget = doc.getLong("budget")!!.toInt(),
-                                                            user_id = doc.getString("user_id")!!,
-                                                            skillRequire = skillRequire ?: emptyList()
-                                                        )
-                                                        // Check if the post ID is not already present in the list
-                                                        if (!postList.any { it.id == projectModel.id }) {
-                                                            postList += projectModel
-                                                            timeMarks += ""
-                                                        }
-                                                    }
-                                                    Collections.sort(
-                                                        postList,
-                                                        Comparator<ProjectModel> { o1, o2 -> o2.time!!.compareTo(o1.time!!) })
-                                                    postAdapter.setProjectList(postList)
-                                                    postAdapter.setTimeMarks(timeMarks)
-
-                                                    if (postList.isNotEmpty()) {
-                                                        binding.noPost.text = "No more posts found"
-                                                    }
-                                                } else {
-                                                    Toast.makeText(
-                                                        activity,
-                                                        "The server is experiencing an error. Please come back later",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                }
-                                            }.addOnFailureListener {
-                                                Toast.makeText(
-                                                    activity,
-                                                    "The server is experiencing an error. Please come back later",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
+                                        if (projectModel.time!!.toDate()
+                                                .compareTo(currentDate) > 0
+                                        ) {
+                                            Toast.makeText(
+                                                context,
+                                                "There is a notification coming from the future. Please check again",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            Log.e("Future notification", projectModel.id.toString())
+                                            System.exit(0)
+                                        } else {
+                                            postList += projectModel
+                                        }
                                         timeMarks += ""
                                     }
-                                } else {
-                                    Toast.makeText(
-                                        activity,
-                                        "The server is experiencing an error. Please come back later",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
                                 }
-                            }.addOnFailureListener {
+
+                                Collections.sort(
+                                    postList,
+                                    Comparator<ProjectModel> { o1, o2 -> o2.time!!.compareTo(o1.time!!) })
+                                postAdapter.setProjectList(postList)
+                                postAdapter.setTimeMarks(timeMarks)
+
+                                if (postList.isEmpty()) {
+                                    binding.noPost.text = "No more posts found"
+                                }
+                            } else {
                                 Toast.makeText(
                                     activity,
                                     "The server is experiencing an error. Please come back later",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
-                    } else {
+                            sweetAlertDialog?.dismiss()
+                        }.addOnFailureListener {
+                            Toast.makeText(
+                                activity,
+                                "The server is experiencing an error. Please come back later",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                 }
                 .addOnFailureListener { exception ->

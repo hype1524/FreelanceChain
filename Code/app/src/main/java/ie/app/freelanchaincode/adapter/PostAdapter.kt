@@ -190,8 +190,7 @@ class PostAdapter(private val context: Context) :
                 }
             }
 
-            db.collection("Project").document(item.user_id.toString()).collection("item")
-                .document(item.id.toString()).get().addOnCompleteListener { task ->
+            db.collection("Project").document(item.id.toString()).get().addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val document = task.result
                         if (document != null) {

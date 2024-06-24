@@ -76,9 +76,7 @@ class UserPostFragment : Fragment() {
         val queryUserId = if (userId != null) userId else currentUserId
 
         if (queryUserId != null) {
-            db.collection("Project")
-                .document(queryUserId)
-                .collection("item")
+            db.collection("Project").whereEqualTo("user_id", queryUserId)
                 .get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {

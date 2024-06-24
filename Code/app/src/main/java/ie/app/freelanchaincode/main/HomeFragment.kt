@@ -70,7 +70,7 @@ class HomeFragment : Fragment() {
 
         val db = FirebaseFirestore.getInstance()
 
-        db.collectionGroup("item")
+        db.collection("Project")
             .get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {

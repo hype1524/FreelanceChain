@@ -81,8 +81,7 @@ class PostProjectActivity : AppCompatActivity() {
 
                     val projectDocId = "${newProject.user_id}"
                     // Add the new project to Firestore
-                    FirebaseFirestore.getInstance().collection("Project").document(projectDocId)
-                        .collection("item").document(id).set(newProject)
+                    FirebaseFirestore.getInstance().collection("Project").document(id).set(newProject)
                         .addOnSuccessListener { documentReference ->
                             Toast.makeText(
                                 this@PostProjectActivity,
