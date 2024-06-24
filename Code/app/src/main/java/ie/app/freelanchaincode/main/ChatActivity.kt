@@ -4,13 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
@@ -20,90 +14,9 @@ import ie.app.freelanchaincode.MainActivity
 import ie.app.freelanchaincode.R
 import ie.app.freelanchaincode.adapter.MessageAdapter
 import ie.app.freelanchaincode.databinding.ActivityChatBinding
-//import ie.app.freelanchaincode.databinding.FragmentChatBinding
 import ie.app.freelanchaincode.models.MessageModel
 
-//class ChatActivity(private val roomChatId: String) : Fragment() {
-//
-//    lateinit var adapter : MessageAdapter
-//    lateinit var toolbar: Toolbar
-//    private lateinit var binding: FragmentChatBinding
-//    private var auth = FirebaseAuth.getInstance().currentUser?.uid
-//
-//    override fun onCreateView(
-//        inflater: LayoutInflater, container: ViewGroup?,
-//        savedInstanceState: Bundle?
-//    ): View? {
-//        // Inflate the layout for this fragment
-//        binding = FragmentChatBinding.inflate(layoutInflater, container, false )
-//
-//        return binding.root
-//    }
-//
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//        adapter = MessageAdapter()
-//
-//        binding.chatBackBtn.setOnClickListener {
-//            onBackPressed()
-//        }
-//
-//        binding.rvMessageList.adapter = adapter
-//
-//        binding.sendBtn.setOnClickListener{
-//            val message = binding.editTextMessage.text.toString()
-//            onCreateMessage(auth, message, roomChatId)
-//            binding.editTextMessage.text.clear()
-//        }
-//
-//        getMessageOfRoom(roomChatId)
-//    }
-//
-//    private fun onBackPressed() {
-//        val fragmentManager = parentFragmentManager
-//        val fragmentTransaction = fragmentManager.beginTransaction()
-//        fragmentTransaction.replace(R.id.frame_layout, RoomChatFragment())
-//        fragmentTransaction.commit()
-//    }
-//
-//    @SuppressLint("NotifyDataSetChanged")
-//    private fun getMessageOfRoom(roomChatId: String) {
-//        FirebaseFirestore.getInstance()
-//            .collection("RoomChat").document(roomChatId)
-//            .collection("Message")
-//            .orderBy("createdAt", Query.Direction.ASCENDING)
-//            .addSnapshotListener { snapshot, error ->
-//                if (error != null) {
-//                    Log.e("Get Message Of Room", "Get message error: $error")
-//                }
-//
-//                if (snapshot != null) {
-//                    val messages = snapshot.mapNotNull {document ->
-//                        document.toObject(MessageModel::class.java)
-//                    }
-//                    adapter.setList(messages)
-//                    adapter.notifyDataSetChanged()
-//                }
-//            }
-//    }
-//
-//    private fun onCreateMessage(sender: String?, content: String?, roomChatId: String) {
-//        val newMessage = MessageModel(
-//            createdAt = null,
-//            sender =  sender,
-//            content = content,
-//        )
-//        FirebaseFirestore.getInstance()
-//            .collection("RoomChat").document(roomChatId)
-//            .collection("Message").add(newMessage)
-//            .addOnSuccessListener {
-//            }.addOnFailureListener { e ->
-//                Log.e("Create Message", "Create Message error $e")
-//            }
-//    }
-//}
-
-class ChatActivity() : AppCompatActivity() {
+class ChatActivity : AppCompatActivity() {
 
     private lateinit var adapter : MessageAdapter
     private lateinit var binding: ActivityChatBinding
@@ -143,9 +56,6 @@ class ChatActivity() : AppCompatActivity() {
             binding.chatUserName.text = "User Name"
         }
 
-
-
-
         adapter = MessageAdapter()
 
         binding.rvMessageList.adapter = adapter
@@ -173,14 +83,14 @@ class ChatActivity() : AppCompatActivity() {
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     Log.e("Get Message Of Room", "Get message error: $error")
+                    return@addSnapshotListener
                 }
 
                 if (snapshot != null) {
-                    val messages = snapshot.mapNotNull {document ->
+                    val messages = snapshot.mapNotNull { document ->
                         document.toObject(MessageModel::class.java)
                     }
                     adapter.setList(messages)
-                    adapter.notifyDataSetChanged()
                 }
             }
     }
@@ -195,6 +105,7 @@ class ChatActivity() : AppCompatActivity() {
             .collection("RoomChat").document(roomChatId)
             .collection("Message").add(newMessage)
             .addOnSuccessListener {
+                Log.d("Create Message", "Message created successfully")
             }.addOnFailureListener { e ->
                 Log.e("Create Message", "Create Message error $e")
             }
