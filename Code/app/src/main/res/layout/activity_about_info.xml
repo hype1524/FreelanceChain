@@ -30,13 +30,22 @@
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/introduction_edt"
+                android:id="@+id/bio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Thêm giới thiệu"
                 android:inputType="textMultiLine"
                 android:maxLines="3"
                 android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/save_bio_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:backgroundTint="@color/blue"
+                android:text="Lưu"
+                android:textColor="@color/white" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -229,7 +238,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
                 android:text="Kỹ năng"
                 android:textColor="@color/black"
                 android:textSize="20sp"
@@ -243,7 +251,7 @@
                 android:layout_marginBottom="10dp" />
 
             <EditText
-                android:id="@+id/add_skill_edt"
+                android:id="@+id/chip_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Thêm kỹ năng"
@@ -251,14 +259,29 @@
                 android:maxLines="3"
                 android:textSize="15sp" />
 
-            <Button
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:backgroundTint="@color/blue"
-                android:text="Thêm"
-                android:textColor="@color/white" />
+                android:layout_margin="10dp">
+
+                <Button
+                    android:id="@+id/add_skill_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:backgroundTint="@color/gray"
+                    android:text="Thêm" />
+
+                <Button
+                    android:id="@+id/save_skill_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:backgroundTint="@color/blue"
+                    android:text="Lưu"
+                    android:textColor="@color/white" />
+            </RelativeLayout>
         </LinearLayout>
     </ScrollView>
 

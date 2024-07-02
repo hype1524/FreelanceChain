@@ -208,6 +208,7 @@ class ProfileActivity : AppCompatActivity(), UserPostFragment.OnPostCountChangeL
             binding.aboutInfoText.text = "See $userName's About Info"
             binding.aboutInfoText.setOnClickListener {
                 val intent = Intent(this, AboutInfoActivity::class.java)
+                intent.putExtra("USER_ID", userId)
                 startActivity(intent)
             }
             if (userId != null && userId != auth.currentUser?.uid) {
