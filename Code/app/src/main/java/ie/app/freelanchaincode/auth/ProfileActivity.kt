@@ -206,6 +206,10 @@ class ProfileActivity : AppCompatActivity(), UserPostFragment.OnPostCountChangeL
             }
             binding.username.text = userName ?: "Unknown User"
             binding.aboutInfoText.text = "See $userName's About Info"
+            binding.aboutInfoText.setOnClickListener {
+                val intent = Intent(this, AboutInfoActivity::class.java)
+                startActivity(intent)
+            }
             if (userId != null && userId != auth.currentUser?.uid) {
                 binding.personalInfo.visibility = View.GONE
                 binding.guestInfo.visibility = View.VISIBLE
