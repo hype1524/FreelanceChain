@@ -188,9 +188,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
-                        android:hint="Thêm bình luận"
-                        android:layout_toRightOf="@id/user_image2"
                         android:layout_marginRight="30dp"
+                        android:layout_toRightOf="@id/user_image2"
+                        android:hint="Thêm bình luận"
                         android:inputType="textMultiLine"
                         android:maxLines="3"
                         android:textSize="15sp" />
@@ -200,8 +200,8 @@
                         android:layout_width="36dp"
                         android:layout_height="36dp"
                         android:layout_alignParentEnd="true"
-                        android:src="@drawable/baseline_send_24"
-                        android:layout_centerVertical="true"/>
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/baseline_send_24" />
                 </RelativeLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -213,18 +213,35 @@
 
     </ScrollView>
 
-    <Button
-        android:id="@+id/chat_button"
+    <RelativeLayout
+        android:id="@+id/rl_bottom_button"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:backgroundTint="?attr/colorPrimary"
-        android:fontFamily="@font/alegreysan"
-        android:text="CHAT ĐỂ ỨNG TUYỂN"
-        app:fabSize="mini" />
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/bid_button"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:backgroundTint="@color/security"
+            android:fontFamily="@font/alegreysan"
+            android:text="BIDDING"
+            android:textColor="@color/black"
+            app:fabSize="mini" />
+
+        <Button
+            android:id="@+id/chat_button"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:backgroundTint="?attr/colorPrimary"
+            android:fontFamily="@font/alegreysan"
+            android:text="CHAT"
+            app:fabSize="mini" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

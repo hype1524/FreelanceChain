@@ -275,25 +275,31 @@ class PostDetailActivity : AppCompatActivity() {
             skillChipGroup.addView(chip)
         }
 
-        binding.chatButton.setOnClickListener {
-            val intent = Intent(this, ChatActivity::class.java)
-            if (userId != null) {
-                if (userId != currentUserId) {
-                    val members: List<String> = listOf(currentUserId, userId)
-                    RoomChatUtil.getOrCreateRoomChatByMembers(members) { roomChatId ->
-                        val bundle = Bundle().apply {
-                            putString("roomChatId", roomChatId)
-                        }
-                        intent.putExtras(bundle)
-                        this.startActivity(intent)
+        if (userId != currentUserId) {
+            binding.rlBottomButton.visibility = View.VISIBLE
+            binding.chatButton.setOnClickListener {
+                val currentUserIdNonNull = currentUserId ?: return@setOnClickListener
+                val userIdNonNull = userId ?: return@setOnClickListener
+
+                val intent = Intent(this, ChatActivity::class.java)
+                val members: List<String> = listOf(currentUserIdNonNull, userIdNonNull)
+                RoomChatUtil.getOrCreateRoomChatByMembers(members) { roomChatId ->
+                    val bundle = Bundle().apply {
+                        putString("roomChatId", roomChatId)
                     }
-                } else {
-                    Toast.makeText(this,"You can't message with yourself",Toast.LENGTH_SHORT).show()
+                    intent.putExtras(bundle)
+                    this.startActivity(intent)
                 }
             }
-            else {
-                Toast.makeText( this,"Owner of this project not found", Toast.LENGTH_SHORT).show()
+
+            binding.bidButton.setOnClickListener {
+                val intent = Intent(this, BiddingActivity::class.java)
+                intent.putExtra("PROJECT_ID", projectId)
+                intent.putExtra("USER_ID", userId)
+                this.startActivity(intent)
             }
+        } else {
+            binding.rlBottomButton.visibility = View.GONE
         }
 
         getCommentList()

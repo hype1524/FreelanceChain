@@ -2,16 +2,12 @@ package ie.app.freelanchaincode.auth
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.text.InputFilter
-import android.text.Spanned
-import android.text.TextUtils
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
@@ -23,13 +19,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import ie.app.freelanchaincode.R
 import ie.app.freelanchaincode.databinding.ActivityAboutInfoBinding
-import ie.app.freelanchaincode.databinding.PopupEditBasicInfoBinding
 import ie.app.freelanchaincode.models.UserModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
-import java.util.regex.Pattern
 
 class AboutInfoActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAboutInfoBinding
@@ -67,7 +60,11 @@ class AboutInfoActivity : AppCompatActivity() {
             binding.addSkillBtn.visibility = View.GONE
             binding.editBasicInfo.visibility = View.GONE
 
-            FirebaseFirestore.getInstance().collection("User").document(userId!!).get()
+            FirebaseFirestore
+                .getInstance()
+                .collection("User")
+                .document(userId!!)
+                .get()
                 .addOnSuccessListener { document ->
                     val userData = document.toObject(UserModel::class.java)
                     userData?.let {
@@ -91,13 +88,13 @@ class AboutInfoActivity : AppCompatActivity() {
                         if (it.gender != null && it.gender != "Chọn giới tính") {
                             binding.genderTxt.text = it.gender
                         } else {
-                            binding.genderTxt.setText("Unknown")
+                            binding.genderTxt.text = "Unknown"
                         }
 
                         if (it.birthday != null && it.birthday != "") {
                             binding.birthdayTxt.text = formatBirthday(it.birthday!!)
                         } else {
-                            binding.birthdayTxt.setText("Unknown")
+                            binding.birthdayTxt.text = "Unknown"
                         }
                     }
                 }
@@ -136,19 +133,19 @@ class AboutInfoActivity : AppCompatActivity() {
                         }
 
                         if (user.gender != null && user.gender != "Chọn giới tính") {
-                            binding.genderTxt.setText(user.gender)
+                            binding.genderTxt.text = user.gender
                         } else {
-                            binding.genderTxt.setText("Unknown")
+                            binding.genderTxt.text = "Unknown"
                         }
 
-                        if (user.birthday!= null && user.birthday != "") {
+                        if (user.birthday != null && user.birthday != "") {
                             Log.d("AboutInfoActivity", "Birthday: ${user.birthday}")
-                            binding.birthdayTxt.setText(formatBirthday(user.birthday!!))
+                            binding.birthdayTxt.text = formatBirthday(user.birthday!!)
                         } else {
-                            binding.birthdayTxt.setText("Unknown")
+                            binding.birthdayTxt.text = "Unknown"
                         }
 
-                        binding.editBasicInfo.setOnClickListener{
+                        binding.editBasicInfo.setOnClickListener {
                             showEditBasicInfoPopup()
                         }
 
@@ -156,26 +153,35 @@ class AboutInfoActivity : AppCompatActivity() {
                             val bio = binding.bio.text.toString()
                             val updatedUser = user.copy(bio = bio)
 
-                            userDocRef.set(updatedUser, SetOptions.merge())
-                                .addOnSuccessListener {
-                                    finish()
-                                    Toast.makeText(this, "Thông tin đã được cập nhật", Toast.LENGTH_SHORT).show()
-                                }
+                            userDocRef.set(updatedUser, SetOptions.merge()).addOnSuccessListener {
+                                finish()
+                                Toast
+                                    .makeText(
+                                        this,
+                                        "Thông tin đã được cập nhật",
+                                        Toast.LENGTH_SHORT,
+                                    ).show()
+                            }
                         }
 
                         binding.saveSkillBtn.setOnClickListener {
                             val skillList = getSkillListFromChips()
-                            if (skillList.isNotEmpty()) {
-                                val updatedUser = user.copy(skills = skillList)
-                                userDocRef.set(updatedUser, SetOptions.merge())
-                                    .addOnSuccessListener {
-                                        finish()
-                                        Toast.makeText(this, "Thông tin kỹ năng đã được cập nhật", Toast.LENGTH_SHORT).show()
-                                    }
+                            val updatedUser = user.copy(skills = skillList)
+                            userDocRef.set(updatedUser, SetOptions.merge()).addOnSuccessListener {
+                                finish()
+                                Toast
+                                    .makeText(
+                                        this,
+                                        "Thông tin kỹ năng đã được cập nhật",
+                                        Toast.LENGTH_SHORT,
+                                    ).show()
                             }
                         }
                         binding.addSkillBtn.setOnClickListener {
-                            if (binding.chipText.text.toString().isNotBlank()) {
+                            if (binding.chipText.text
+                                    .toString()
+                                    .isNotBlank()
+                            ) {
                                 addChipsFromText(binding.chipText.text.toString())
                             }
                             binding.chipText.setText("")
@@ -208,40 +214,52 @@ class AboutInfoActivity : AppCompatActivity() {
     private fun showEditBasicInfoPopup() {
         val popupView = LayoutInflater.from(this).inflate(R.layout.popup_edit_basic_info, null)
 
-        val alertDialog = AlertDialog.Builder(this)
-            .setView(popupView)
-            .setPositiveButton("Save") { dialog, which ->
-                val spinner = popupView.findViewById<Spinner>(R.id.spinner)
-                val edtBirthday = popupView.findViewById<EditText>(R.id.edtBirthday)
+        val alertDialog =
+            AlertDialog
+                .Builder(this)
+                .setView(popupView)
+                .setPositiveButton("Save") { dialog, which ->
+                    val spinner = popupView.findViewById<Spinner>(R.id.spinner)
+                    val edtBirthday = popupView.findViewById<EditText>(R.id.edtBirthday)
 
-                val selectedGender = spinner.selectedItem.toString()
-                val birthday = edtBirthday.text.toString()
+                    val selectedGender = spinner.selectedItem.toString()
+                    val birthday = edtBirthday.text.toString()
 
-                if (userId == null || userId == user?.uid) {
-                    userId = user?.uid
-                    val db = FirebaseFirestore.getInstance()
-                    val userDocRef = user?.let { db.collection("User").document(userId!!) }
+                    if (userId == null || userId == user?.uid) {
+                        userId = user?.uid
+                        val db = FirebaseFirestore.getInstance()
+                        val userDocRef = user?.let { db.collection("User").document(userId!!) }
 
-                    val updates = hashMapOf<String, Any>(
-                        "gender" to selectedGender,
-                        "birthday" to birthday
-                    )
+                        val updates =
+                            hashMapOf<String, Any>(
+                                "gender" to selectedGender,
+                                "birthday" to birthday,
+                            )
 
-                    if (userDocRef != null) {
-                        userDocRef.set(updates, SetOptions.merge())
-                            .addOnSuccessListener {
-                                Toast.makeText(this, "Thông tin đã được cập nhật", Toast.LENGTH_SHORT).show()
-                            }
-                            .addOnFailureListener { e ->
-                                Toast.makeText(this, "Cập nhật thất bại: ${e.message}", Toast.LENGTH_SHORT).show()
-                            }
+                        if (userDocRef != null) {
+                            userDocRef
+                                .set(updates, SetOptions.merge())
+                                .addOnSuccessListener {
+                                    Toast
+                                        .makeText(
+                                            this,
+                                            "Thông tin đã được cập nhật",
+                                            Toast.LENGTH_SHORT,
+                                        ).show()
+                                }.addOnFailureListener { e ->
+                                    Toast
+                                        .makeText(
+                                            this,
+                                            "Cập nhật thất bại: ${e.message}",
+                                            Toast.LENGTH_SHORT,
+                                        ).show()
+                                }
+                        }
                     }
-                }
 
-                finish()
-            }
-            .setNegativeButton("Cancel", null)
-            .create()
+                    finish()
+                }.setNegativeButton("Cancel", null)
+                .create()
 
         alertDialog.show()
 
@@ -262,7 +280,7 @@ class AboutInfoActivity : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, options)
         spinner.adapter = adapter
 
-        if (user?.uid  != null) {
+        if (user?.uid != null) {
             val db = FirebaseFirestore.getInstance()
             val userDocRef = db.collection("User").document(user.uid)
 
@@ -281,21 +299,23 @@ class AboutInfoActivity : AppCompatActivity() {
             }
         }
 
-
         edtBirthday.setOnClickListener {
             val calendar = Calendar.getInstance()
             val year = calendar.get(Calendar.YEAR)
             val month = calendar.get(Calendar.MONTH)
             val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-            val datePickerDialog = DatePickerDialog(
-                this,
-                { _, selectedYear, selectedMonth, selectedDay ->
-                    val date = "$selectedDay/${selectedMonth + 1}/$selectedYear"
-                    edtBirthday.setText(date)
-                },
-                year, month, day
-            )
+            val datePickerDialog =
+                DatePickerDialog(
+                    this,
+                    { _, selectedYear, selectedMonth, selectedDay ->
+                        val date = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+                        edtBirthday.setText(date)
+                    },
+                    year,
+                    month,
+                    day,
+                )
             datePickerDialog.show()
         }
     }
