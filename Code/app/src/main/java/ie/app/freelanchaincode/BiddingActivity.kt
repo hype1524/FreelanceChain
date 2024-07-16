@@ -18,6 +18,7 @@ import java.util.UUID
 
 class BiddingActivity : AppCompatActivity() {
     private lateinit var binding: ActivityBiddingBinding
+    private var existingBidId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,23 +70,36 @@ class BiddingActivity : AppCompatActivity() {
         binding.btnBid.setOnClickListener {
             val bidAmount = binding.edtBidAmount.text.toString().replace(",", "")
             val bidDescription = binding.description.text.toString()
-            if (bidAmount.isEmpty() || bidDescription.isEmpty()) {
+            val bidTitle = binding.edtBidTitle.text.toString()
+            if (bidAmount.isEmpty() || bidDescription.isEmpty() || bidTitle.isEmpty()) {
                 Toast.makeText(this, "Please fill all the fields", Toast.LENGTH_SHORT).show()
             } else if (bidDescription.length < 20) {
                 Toast.makeText(this, "Mô tả quá ngắn, đề xuất của bạn phải tối thiểu 20 ký tự", Toast.LENGTH_SHORT).show()
             } else {
-                val biddingModel = BiddingModel()
-                biddingModel.id = UUID.randomUUID().toString() + "-" + Date().time
-                biddingModel.projectId = intent.getStringExtra("PROJECT_ID")
-                biddingModel.userId = FirebaseAuth.getInstance().currentUser?.uid
-                biddingModel.ownerId = intent.getStringExtra("USER_ID")
-                biddingModel.bidAmount = bidAmount
-                biddingModel.bidDescription = bidDescription
-                biddingModel.bidTime = Date().time.toString()
-                biddingModel.bidStatus = null
+                val biddingModel = BiddingModel().apply {
+                    this.bidTitle = bidTitle
+                    this.projectId = intent.getStringExtra("PROJECT_ID")
+                    this.userId = FirebaseAuth.getInstance().currentUser?.uid
+                    this.ownerId = intent.getStringExtra("USER_ID")
+                    this.bidAmount = bidAmount
+                    this.bidDescription = bidDescription
+                    this.bidTime = Date().time.toString()
+                    this.bidStatus = null
+                }
+
                 val db = FirebaseFirestore.getInstance()
-                biddingModel.id?.let { it1 ->
-                    db.collection("Bidding").document(it1).set(biddingModel)
+                if (existingBidId != null) {
+                    db.collection("Bidding").document(existingBidId!!).set(biddingModel)
+                        .addOnSuccessListener {
+                            Toast.makeText(this, "Bid Updated Successfully", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(this, "Failed to update bid", Toast.LENGTH_SHORT).show()
+                        }
+                } else {
+                    biddingModel.id = UUID.randomUUID().toString() + "-" + Date().time
+                    db.collection("Bidding").document(biddingModel.id!!).set(biddingModel)
                         .addOnSuccessListener {
                             Toast.makeText(this, "Bid Placed Successfully", Toast.LENGTH_SHORT).show()
                             finish()
@@ -97,5 +111,31 @@ class BiddingActivity : AppCompatActivity() {
             }
         }
 
+        getData()
+
+    }
+
+    private fun getData() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        val projectId = intent.getStringExtra("PROJECT_ID")
+
+        if (userId != null && projectId != null) {
+            val db = FirebaseFirestore.getInstance()
+            db.collection("Bidding")
+                .whereEqualTo("userId", userId)
+                .whereEqualTo("projectId", projectId)
+                .get()
+                .addOnSuccessListener { documents ->
+                    if (!documents.isEmpty) {
+                        val bidding = documents.documents[0].toObject(BiddingModel::class.java)
+                        existingBidId = documents.documents[0].id // Lưu ID của document
+                        bidding?.let {
+                            binding.edtBidTitle.setText(it.bidTitle)
+                            binding.edtBidAmount.setText(it.bidAmount)
+                            binding.description.setText(it.bidDescription)
+                        }
+                    }
+                }
+        }
     }
 }

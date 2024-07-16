@@ -9,4 +9,5 @@ class BiddingModel {
     var bidTime: String? = null
     var bidStatus: Boolean? = null
     var bidDescription: String? = null
+    var bidTitle: String? = null
 }

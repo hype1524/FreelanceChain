@@ -37,6 +37,26 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/k2d_med"
+                android:text="Tiêu đề"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edtBidTitle"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/edit_text_background"
+                android:hint="Nhập tiêu đề cho chào giá"
+                android:textStyle="bold"
+                android:paddingHorizontal="10dp"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/k2d_med"
                 android:text="Số tiền chào giá (vnd)"
                 android:textSize="16sp"
                 android:textStyle="bold" />

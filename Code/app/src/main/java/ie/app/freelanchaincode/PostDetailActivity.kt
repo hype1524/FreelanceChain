@@ -277,6 +277,7 @@ class PostDetailActivity : AppCompatActivity() {
 
         if (userId != currentUserId) {
             binding.rlBottomButton.visibility = View.VISIBLE
+            binding.viewBiddingListButton.visibility = View.GONE
             binding.chatButton.setOnClickListener {
                 val currentUserIdNonNull = currentUserId ?: return@setOnClickListener
                 val userIdNonNull = userId ?: return@setOnClickListener
@@ -300,6 +301,7 @@ class PostDetailActivity : AppCompatActivity() {
             }
         } else {
             binding.rlBottomButton.visibility = View.GONE
+            binding.viewBiddingListButton.visibility = View.VISIBLE
         }
 
         getCommentList()
@@ -310,6 +312,11 @@ class PostDetailActivity : AppCompatActivity() {
         commentList = ArrayList()
         commentAdapter = CommentAdapter(this@PostDetailActivity)
         binding.rvComment.adapter = commentAdapter
+
+        binding.viewBiddingListButton.setOnClickListener {
+            val intent = Intent(this, BiddingListActivity::class.java)
+            this.startActivity(intent)
+        }
     }
 
     private fun saveComment(db: FirebaseFirestore, projectId: String, userId: String, commentContent: String) {
