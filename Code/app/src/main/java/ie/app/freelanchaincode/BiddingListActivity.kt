@@ -12,6 +12,7 @@ class BiddingListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityBiddingListBinding
     private lateinit var adapter: BiddingAdapter
     private lateinit var biddingList: ArrayList<BiddingModel>
+    private var projectId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +24,7 @@ class BiddingListActivity : AppCompatActivity() {
         // Initialize RecyclerView
         binding.rvBiddingList.layoutManager = LinearLayoutManager(this)
         biddingList = ArrayList()
-        adapter = BiddingAdapter(biddingList)
+        adapter = BiddingAdapter(this, biddingList)
         binding.rvBiddingList.adapter = adapter
 
         // Get project ID from Intent
@@ -34,17 +35,23 @@ class BiddingListActivity : AppCompatActivity() {
     }
 
     private fun fetchBiddingList(projectId: String) {
+        adapter.setProjectId(projectId)
         val db = FirebaseFirestore.getInstance()
-        db.collection("Bidding")
+        db
+            .collection("Bidding")
             .whereEqualTo("projectId", projectId)
             .get()
             .addOnSuccessListener { documents ->
-                for (document in documents) {
-                    val bid = document.toObject(BiddingModel::class.java)
-                    biddingList.add(bid)
+                if (documents.isEmpty) {
+                    binding.tvNoBiddingFound.visibility = android.view.View.VISIBLE
+                } else {
+                    binding.tvNoBiddingFound.visibility = android.view.View.GONE
+                    for (document in documents) {
+                        val bid = document.toObject(BiddingModel::class.java)
+                        biddingList.add(bid)
+                    }
+                    adapter.notifyDataSetChanged()
                 }
-                adapter.notifyDataSetChanged()
-            }
-            .addOnFailureListener { exception -> }
+            }.addOnFailureListener { exception -> }
     }
 }

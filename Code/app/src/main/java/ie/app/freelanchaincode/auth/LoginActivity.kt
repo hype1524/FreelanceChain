@@ -91,11 +91,7 @@ class LoginActivity : AppCompatActivity() {
                             .get().addOnSuccessListener { documentSnapshot ->
                             val tempGGUser = documentSnapshot.toObject(UserModel::class.java)
                             if (tempGGUser != null && tempGGUser.signIn) {
-                                Toast.makeText(
-                                    this@LoginActivity,
-                                    "This account already signed in!",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                tempGGUser.signIn = false
                                 FirebaseAuth.getInstance().signOut()
                                 googleSignInClient.signOut().addOnCompleteListener {
                                     recreate()

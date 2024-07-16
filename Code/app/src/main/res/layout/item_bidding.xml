@@ -113,14 +113,6 @@
                 android:text="Accept"
                 android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/btnDecline"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:backgroundTint="#FFC90E"
-                android:text="Decline"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
         </RelativeLayout>
 
     </LinearLayout>
