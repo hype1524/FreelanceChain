@@ -314,7 +314,9 @@ class PostDetailActivity : AppCompatActivity() {
         binding.rvComment.adapter = commentAdapter
 
         binding.viewBiddingListButton.setOnClickListener {
+            val projectId = intent.getStringExtra("PROJECT_ID")
             val intent = Intent(this, BiddingListActivity::class.java)
+            intent.putExtra("PROJECT_ID", projectId)
             this.startActivity(intent)
         }
     }
