@@ -4,8 +4,7 @@
     android:id="@+id/post_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="10dp"
-    app:cardCornerRadius="15dp">
+    android:layout_marginBottom="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -45,7 +44,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/post_time"
+                    android:id="@+id/bid_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -55,59 +54,45 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/is_bidded"
+                android:id="@+id/bid_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:background="@color/light_grey"
                 android:fontFamily="@font/alegreysan"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="5dp"
-                android:text="is bidded"
-                android:textColor="@color/red"
-                android:textSize="18sp"
-                android:visibility="gone" />
+                android:text="22,000vnd"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/proj_name"
+            android:id="@+id/bid_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:fontFamily="@font/karmaregular"
-            android:text="Project name"
+            android:text="Bid Title"
             android:textColor="@color/blue"
             android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/proj_budget"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Budget: 1000$-2000$"
-            android:textColor="@color/main_green"
-            android:textStyle="italic" />
-
-        <TextView
-            android:id="@+id/proj_auction"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Auction: 10 days left - 5 bids"
-            android:textColor="@color/red" />
-
-        <TextView
-            android:id="@+id/proj_desc"
+            android:id="@+id/bid_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:ellipsize="end"
-            android:maxLines="2"
             android:text="Description: This is a project description To help you get started, we would like to offer you a free upgrade to our Plus Membership for 1 month (valued at $8.95 USD). You'll receive these great benefits:" />
 
+        <TextView
+            android:id="@+id/read_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Xem thêm"
+            android:textColor="@color/blue" />
+
         <com.google.android.material.chip.ChipGroup
-            android:id="@+id/proj_chip_group"
+            android:id="@+id/bid_chip_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -118,47 +103,18 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp">
+            android:layout_height="50dp">
 
-            <TextView
-                android:id="@+id/like_count"
+            <Button
+                android:id="@+id/btnAccept"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="100 likes"
-                android:textSize="12sp"
-                android:textStyle="italic" />
-
-            <TextView
-                android:id="@+id/comment_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
-                android:text="100 comments"
-                android:textSize="12sp"
-                android:textStyle="italic" />
+                android:text="Accept"
+                android:textStyle="bold" />
+
         </RelativeLayout>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/setting_item_bg"
-            android:padding="5dp">
-
-            <ImageView
-                android:id="@+id/like"
-                android:layout_width="180dp"
-                android:layout_height="20dp"
-                android:src="@drawable/like" />
-
-            <ImageView
-                android:id="@+id/comment"
-                android:layout_width="180dp"
-                android:layout_height="20dp"
-                android:layout_alignParentEnd="true"
-                android:src="@drawable/comment" />
-        </RelativeLayout>
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

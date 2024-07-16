@@ -76,7 +76,8 @@ class PostProjectActivity : AppCompatActivity() {
                         budget = budget, // Get budget from EditText or wherever it's entered
                         kindOfPay = kindOfPay, // Get kind of pay from EditText or wherever it's entered
                         skillRequire = skillRequire,// Get skills from wherever they are entered
-                        user_id = user_id, time = time
+                        user_id = user_id, time = time,
+                        isBidded = false
                     )
 
                     val projectDocId = "${newProject.user_id}"

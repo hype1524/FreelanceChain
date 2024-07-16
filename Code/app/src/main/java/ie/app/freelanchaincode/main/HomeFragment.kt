@@ -19,7 +19,6 @@ import java.lang.System.exit
 import java.util.Collections
 import java.util.Date
 
-
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
@@ -31,7 +30,6 @@ class HomeFragment : Fragment() {
     private lateinit var postAdapter: PostAdapter
     private lateinit var projectList: ArrayList<ProjectModel>
     val db = FirebaseFirestore.getInstance()
-
     private var sweetAlertDialog: SweetAlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,11 +62,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun getPostList() {
-
         sweetAlertDialog = SweetAlertDialog(requireContext(), SweetAlertDialog.PROGRESS_TYPE)
         sweetAlertDialog?.show()
-
-        val db = FirebaseFirestore.getInstance()
 
         db.collection("Project")
             .get()
@@ -80,6 +75,8 @@ class HomeFragment : Fragment() {
 
                     for (doc in task.result) {
                         val skillRequire = doc["skillRequire"] as List<String>?
+                        val isBidded = doc.getBoolean("isBidded") ?: false
+
                         val projectModel = ProjectModel(
                             id = doc.id,
                             time = doc.getTimestamp("time")!!,
@@ -88,24 +85,17 @@ class HomeFragment : Fragment() {
                             kindOfPay = doc.getString("kindOfPay")!!,
                             budget = doc.getLong("budget")!!.toInt(),
                             user_id = doc.getString("user_id")!!,
-                            skillRequire = skillRequire ?: emptyList()
+                            skillRequire = skillRequire ?: emptyList(),
+                            isBidded = isBidded // Gán giá trị đã kiểm tra
                         )
-                        if (projectModel.time!!.toDate().compareTo(currentDate) > 0) {
-                            Toast.makeText(
-                                context,
-                                "There is a notification coming from the future. Please check again",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            Log.e("Future notification", projectModel.id.toString())
-                            exit(0)
-                        } else {
+
+                        if (!isBidded) {
                             postList += projectModel
                         }
                         timeMarks += ""
                     }
-                    Collections.sort(
-                        postList,
-                        Comparator<ProjectModel> { o1, o2 -> o2.time!!.compareTo(o1.time!!) })
+
+                    Collections.sort(postList, Comparator<ProjectModel> { o1, o2 -> o2.time!!.compareTo(o1.time!!) })
                     postAdapter.setProjectList(postList)
                     postAdapter.setTimeMarks(timeMarks)
 
@@ -113,22 +103,13 @@ class HomeFragment : Fragment() {
                         binding.noPost.text = "No more posts found"
                     }
                 } else {
-                    Toast.makeText(
-                        activity,
-                        "The server is experiencing an error. Please come back later",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(activity, "The server is experiencing an error. Please come back later", Toast.LENGTH_SHORT).show()
                 }
                 sweetAlertDialog?.dismiss()
             }.addOnFailureListener {
-                Toast.makeText(
-                    activity,
-                    "The server is experiencing an error. Please come back later",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(activity, "The server is experiencing an error. Please come back later", Toast.LENGTH_SHORT).show()
                 sweetAlertDialog?.dismiss()
             }
-
     }
 
     companion object {

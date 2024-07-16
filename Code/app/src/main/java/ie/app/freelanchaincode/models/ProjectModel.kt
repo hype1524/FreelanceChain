@@ -12,5 +12,6 @@ data class ProjectModel (
     var description: String? = null,
     var budget: Int? = null,
     var kindOfPay: String? = null,
-    var skillRequire: List<String> = emptyList()
+    var skillRequire: List<String> = emptyList(),
+    var isBidded: Boolean = false,
 )

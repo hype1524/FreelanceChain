@@ -16,6 +16,12 @@
         android:theme="@style/Base.Theme.FreelanchainCode"
         tools:targetApi="31">
         <activity
+            android:name=".BiddingListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".BiddingActivity"
+            android:exported="false" />
+        <activity
             android:name=".auth.AboutInfoActivity"
             android:exported="false" />
         <activity

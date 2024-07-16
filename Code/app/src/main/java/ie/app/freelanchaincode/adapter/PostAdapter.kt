@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
@@ -54,8 +55,9 @@ class PostAdapter(private val context: Context) :
         var item: CardView = itemView.findViewById(R.id.post_item)
         var likeCount: TextView = itemView.findViewById(R.id.like_count)
         var cardView: CardView = itemView.findViewById(R.id.post_item)
-        var userInfo: LinearLayout = itemView.findViewById(R.id.user_info)
+        var userInfo: RelativeLayout = itemView.findViewById(R.id.user_info)
         var commentCount: TextView = itemView.findViewById(R.id.comment_count)
+        var isbidded: TextView = itemView.findViewById(R.id.is_bidded)
     }
 
     fun setProjectList(projectList: List<ProjectModel>) {
@@ -202,8 +204,18 @@ class PostAdapter(private val context: Context) :
                             val diff = if (timestamp != null) {
                                 now.time - timestamp.time
                             } else {
-                                0 // Default value
+                                0
                             }
+
+                            val isBidded = document.getBoolean("isBidded") ?: false
+                            if (!isBidded) {
+                                holder.projAuction.visibility = View.VISIBLE
+                                holder.isbidded.visibility = View.GONE
+                            } else {
+                                holder.projAuction.visibility = View.GONE
+                                holder.isbidded.visibility = View.VISIBLE
+                            }
+
                             val postTimeText = when {
                                 diff < DateUtils.HOUR_IN_MILLIS -> {
                                     val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
